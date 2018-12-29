@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
+import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -41,15 +42,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         findViews();
         loadSharedPreferences();
-        getRegiserData();
+        getRegisterData();
         initTextChangeListener();
+        Firebase_DBManager f = new Firebase_DBManager();
+        f.retrieveData();
     }
 
     /**
      * If the user just signed up, the function get the data from the RegisterActivity activity
      * and put it into the userName and password edit text
      */
-    private void getRegiserData() {
+    private void getRegisterData() {
         //get the intent that called this activity
         Intent intent = getIntent();
         //if extra data was sent from the calling activity
