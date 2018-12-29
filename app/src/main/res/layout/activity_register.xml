@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".controller.RegisterActivity">
+
+
+    <TextView
+        android:id="@+id/register_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/register_textview"
+        android:textColor="@color/wine"
+        android:textSize="30sp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:background="@color/yellow"
+        android:fontFamily="@font/aladin"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <EditText
+        android:id="@+id/fullName"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_action_username"
+        android:ems="10"
+        android:hint="@string/register_fullName"
+        android:inputType="textPersonName"
+        android:textColor="@color/wine" />
+
+    <!--<EditText
+        android:id="@+id/username_editext"
+        android:layout_width="270dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/register_username"
+        android:inputType="textPersonName"
+        android:textColor="?android:attr/colorBackground"
+        android:drawableLeft="@drawable/ic_action_username1"/>-->
+
+    <EditText
+        android:id="@+id/password_editext"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_action_password"
+        android:ems="10"
+        android:hint="@string/register_password"
+        android:textColor="@color/wine"
+        android:inputType="textPassword"/>
+
+    <EditText
+        android:id="@+id/id"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_action_id"
+        android:ems="10"
+        android:hint="@string/register_id"
+        android:inputType="number"
+        android:textColor="@color/wine"/>
+
+    <EditText
+        android:id="@+id/phoneNumber"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_action_phone"
+        android:ems="10"
+        android:hint="@string/register_phone"
+        android:inputType="phone"
+        android:textColor="@color/wine"/>
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_action_email"
+        android:ems="10"
+        android:hint="@string/register_email"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/wine"/>
+
+    <EditText
+        android:id="@+id/ccNumber"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_action_creditcard"
+        android:ems="10"
+        android:hint="@string/register_ccNumber"
+        android:inputType="number"
+        android:textColor="@color/wine"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/register_button"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="129dp"
+        android:background="@drawable/buttonshape"
+        android:fontFamily="@font/aladin"
+        android:shadowColor="#ffffff"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:text="@string/register_textview"
+        android:textColor="@color/yellow"
+        android:textSize="20sp" />
+
+</LinearLayout>
