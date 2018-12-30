@@ -11,8 +11,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class Firebase_DBManager implements Backend{
 
+    final ArrayList<Driver> driverList = new ArrayList<Driver>();
 
     static DatabaseReference driverRef;
     static {
@@ -46,8 +49,7 @@ public class Firebase_DBManager implements Backend{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot driverSnapshot: dataSnapshot.getChildren()) {
-                    Driver driver = driverSnapshot.getValue(Driver.class);
-
+                    driverList.add(driverSnapshot.getValue(Driver.class));
                 }
             }
 

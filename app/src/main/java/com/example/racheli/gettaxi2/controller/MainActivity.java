@@ -3,6 +3,7 @@ package com.example.racheli.gettaxi2.controller;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,11 +13,18 @@ import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private EditText usernameEditext;
+    private FirebaseAuth mAuth;
+
+    private EditText emailEditext;
     private EditText passwordEditext;
     private Button loginButton;
     private Button registerButton;
@@ -26,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
 
     private void findViews() {
-        usernameEditext = (EditText) findViewById(R.id.email_editext);
+        emailEditext = (EditText) findViewById(R.id.email_editext);
         passwordEditext = (EditText) findViewById(R.id.password_edittext);
         loginButton = (Button) findViewById(R.id.login_button);
         registerButton = (Button) findViewById(R.id.register_button);
@@ -63,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     this.getIntent().getExtras().containsKey("password") )
             {
                 //assign into the text view the email and password
-                usernameEditext.setText(intent.getStringExtra("email"));
+                emailEditext.setText(intent.getStringExtra("email"));
                 passwordEditext.setText(intent.getStringExtra("password"));
             }
         }
@@ -72,11 +80,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == loginButton) {
-            //save the email and the password into shared prefrence
-            saveSharedPreferences();
-            //call new intent with the navigation drawer
-            Intent intent = new Intent(this, NavigationDrawerActivity.class);
-            startActivity(intent);
+            //try to login using firebase function
+            singIn(emailEditext.getText().toString(), passwordEditext.getText().toString());
+
         }
         if(v == registerButton)
         {
@@ -97,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         //set all edit text for onFocusChangeListener
-        usernameEditext.setOnFocusChangeListener(onFocusChangeListener);
+        emailEditext.setOnFocusChangeListener(onFocusChangeListener);
         passwordEditext.setOnFocusChangeListener(onFocusChangeListener);
 
     }
@@ -107,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      **/
     private void validate() {
         boolean isAllValid = true;
-        if(usernameEditext.getText().length() == 0 || passwordEditext.getText().length() == 0)
+        if(emailEditext.getText().length() == 0 || passwordEditext.getText().length() == 0)
         {
             isAllValid = false;
         }
@@ -121,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void loadSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPreferences.contains("NAME")) {
-            usernameEditext.setText(sharedPreferences.getString("NAME", null));
+            emailEditext.setText(sharedPreferences.getString("NAME", null));
             Toast.makeText(this, "load name", Toast.LENGTH_SHORT).show();
         }
         if (sharedPreferences.contains("PASSWORD")) {
@@ -139,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            String name = usernameEditext.getText().toString();
+            String name = emailEditext.getText().toString();
             String password = passwordEditext.getText().toString();
             editor.putString("NAME", name);
             editor.putString("PASSWORD", password);
@@ -151,4 +157,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "failed to save Preferences", Toast.LENGTH_SHORT).show();
         }
     }
+    private void singIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            callIntent();
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(getBaseContext(), "incorrect email or password", Toast.LENGTH_SHORT).show();
+                            loginButton.setEnabled(true); //set the button to enable other login
+                        }
+                    }
+                });
+    }
+
+    private void callIntent() {
+        //save the email and the password into shared preference
+        saveSharedPreferences();
+        //call new intent with the navigation drawer
+        Intent intent = new Intent(this, NavigationDrawerActivity.class);
+        startActivity(intent);
+    }
+
+
 }
+
