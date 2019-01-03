@@ -6,15 +6,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_availabe_rides"
-            android:icon="@drawable/ic_menu_camera"
             android:title="Available Rides" />
         <item
             android:id="@+id/nav_specific_rides"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="Specific Rides" />
         <item
             android:id="@+id/nav_exit"
-            android:icon="@drawable/ic_menu_slideshow"
             android:title="Exit" />
 
     </group>

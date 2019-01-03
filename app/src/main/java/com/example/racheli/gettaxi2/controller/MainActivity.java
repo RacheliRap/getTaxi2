@@ -13,11 +13,15 @@ import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
+import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -52,8 +56,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadSharedPreferences();
         getRegisterData();
         initTextChangeListener();
-        Firebase_DBManager f = new Firebase_DBManager();
-        f.retrieveData();
+        Firebase_DBManager.notifyToRidesList();
+        ArrayList<Driver> list = Firebase_DBManager.getDriverList();
+
+
     }
 
     /**
@@ -80,8 +86,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == loginButton) {
+            ArrayList<Driver> list = Firebase_DBManager.getDriverList();
+
             //try to login using firebase function
-            singIn(emailEditext.getText().toString(), passwordEditext.getText().toString());
+            //singIn(emailEditext.getText().toString(), passwordEditext.getText().toString());
+            //save the email and the password into shared preference
+            saveSharedPreferences();
+            //call new intent with the navigation drawer
+            Intent intent = new Intent(this, NavigationDrawerActivity.class);
+            startActivity(intent);
 
         }
         if(v == registerButton)

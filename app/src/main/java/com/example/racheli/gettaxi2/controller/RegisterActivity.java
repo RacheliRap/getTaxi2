@@ -64,7 +64,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if(v == registerButton)
         {
             addDriver();
-            register(emailEditext.getText().toString() , passwordEditext.getText().toString());
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("email" ,emailEditext.getText().toString() );
+            intent.putExtra("password" ,passwordEditext.getText().toString() );
+            startActivity(intent);
+            //register(emailEditext.getText().toString() , passwordEditext.getText().toString());
         }
     }
 
