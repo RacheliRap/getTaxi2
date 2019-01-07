@@ -1,6 +1,7 @@
 package com.example.racheli.gettaxi2.controller;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -85,17 +86,19 @@ public class NavigationDrawerActivity extends AppCompatActivity
         FragmentManager fragmentManager = getFragmentManager();
 
         if (id == R.id.nav_availabe_rides) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame , new AvailableRidesFragment()).commit();
+           // fragmentManager.beginTransaction().replace(R.id.content_frame , new AvailableRidesFragment()).commit();
         } else if (id == R.id.nav_specific_rides) {
             fragmentManager.beginTransaction().replace(R.id.content_frame , new SpecificRidesFragment()).commit();
+            //if the user press exit return the app to the login activity
         } else if (id == R.id.nav_exit) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame , new ExitFragment()).commit();
+            //fragmentManager.beginTransaction().replace(R.id.content_frame , new ExitFragment()).commit();
+            Intent intent = new Intent(this , MainActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

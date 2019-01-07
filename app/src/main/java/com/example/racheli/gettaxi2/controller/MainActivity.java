@@ -56,9 +56,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadSharedPreferences();
         getRegisterData();
         initTextChangeListener();
-        Firebase_DBManager.notifyToRidesList();
-        ArrayList<Driver> list = Firebase_DBManager.getDriverList();
-
 
     }
 
@@ -93,7 +90,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //save the email and the password into shared preference
             saveSharedPreferences();
             //call new intent with the navigation drawer
-            Intent intent = new Intent(this, NavigationDrawerActivity.class);
+            Intent intent = new Intent(this , AvailableRidesFragment.class);
+            //Intent intent = new Intent(this, NavigationDrawerActivity.class);
             startActivity(intent);
 
         }

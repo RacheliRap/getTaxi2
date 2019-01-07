@@ -1,31 +1,56 @@
 package com.example.racheli.gettaxi2.controller;
-
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ListFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
-import com.example.racheli.gettaxi2.BlankFragment;
+import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.example.racheli.gettaxi2.R;
 
-public class AvailableRidesFragment extends Fragment {
-    View view;
-    @Nullable
+import java.util.ArrayList;
+import java.util.List;
+
+public class AvailableRidesFragment extends AppCompatActivity
+{
+    RecyclerView recyclerView;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
-        View v = inflater.inflate(R.layout.available_rides_layout , container , false);
-        BlankFragment fragment = new BlankFragment();
-        FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().replace(R.id.fragment_container,fragment, fragment.getTag()).commit();
-
-        return v;
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ((MyAdapter)recyclerView.getAdapter()).onSaveInstanceState(outState);
     }
-}
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.available_rides_layout);
+
+        recyclerView = (RecyclerView) findViewById(R.id.myRecyclerView);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        MyAdapter adapter = new MyAdapter(this,initData());
+
+        adapter.setParentClickableViewAnimationDefaultDuration();
+        adapter.setParentAndIconExpandOnClick(true);
+
+        recyclerView.setAdapter(adapter);
+    }
+
+    private List<ParentObject> initData() {
+        TitleCreator titleCreator = TitleCreator.get(this);
+        List<TitleParent> titels = titleCreator.getAll();
+        List<ParentObject> parentObjects = new ArrayList<>();
+        for(TitleParent title : titels)
+        {
+            List<Object> childList = new ArrayList<>();
+            childList.add(new TitleChild("Add to contacts", "Send messege"));
+            title.setChildObjectList(childList);
+            parentObjects.add(title);
+
+        }
+        return parentObjects;
+    }
+
+
+}

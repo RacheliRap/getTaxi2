@@ -129,7 +129,7 @@ public class Firebase_DBManager implements Backend{
             driverRef.addChildEventListener(driverRefChildEventListener);
         }
 
-    public static void notifyToRidesList() {
+   public static void notifyToRidesList() {
 
         rideRefChildEventListener = new ChildEventListener() {
             @Override
