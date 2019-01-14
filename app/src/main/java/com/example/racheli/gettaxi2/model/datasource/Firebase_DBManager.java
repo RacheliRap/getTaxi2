@@ -25,11 +25,6 @@ import java.util.List;
 
 public class Firebase_DBManager implements Backend{
 
-    public interface NotifyDataChange<T> {
-        void OnDataChanged(T obj);
-
-        void onFailure(Exception exception);
-    }
 
     static final ArrayList<Driver> driverList = new ArrayList<Driver>();
     static final  ArrayList<Ride> rideList = new ArrayList<>();
@@ -43,10 +38,12 @@ public class Firebase_DBManager implements Backend{
     }
 
     static DatabaseReference driverRef;
+    static DatabaseReference rideRef;
     static {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         driverRef = database.getReference("drivers");
+        rideRef = database.getReference("rides");
     }
 
     @Override
@@ -129,7 +126,7 @@ public class Firebase_DBManager implements Backend{
             driverRef.addChildEventListener(driverRefChildEventListener);
         }
 
-   public static void notifyToRidesList() {
+   /*public static void notifyToRidesList() {
 
         rideRefChildEventListener = new ChildEventListener() {
             @Override
@@ -188,6 +185,72 @@ public class Firebase_DBManager implements Backend{
         if (driverRefChildEventListener != null) {
             driverRef.removeEventListener(driverRefChildEventListener);
             driverRefChildEventListener = null;
+
+        }
+    }*/
+    public static void NotifyToRideList(final NotifyDataChange<List<Ride>> notifyDataChange) {
+        if (notifyDataChange != null) {
+            if (rideRefChildEventListener != null) {
+                notifyDataChange.onFailure(new Exception("first unNotify rides list"));
+                return;
+            }
+            rideList.clear();
+            rideRefChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Ride ride = dataSnapshot.getValue(Ride.class);
+                    String id = dataSnapshot.getKey();
+                    //Ride.setId(Long.parseLong(id));
+                    rideList.add(ride);
+                    notifyDataChange.OnDataChanged(rideList);
+                }
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    Ride ride = dataSnapshot.getValue(Ride.class);
+                    //Long id = Long.parseLong(dataSnapshot.getKey());
+                    //ride.setId(id);
+                    String name = ride.getDriverName();
+                    String time = ride.getStartingTime();
+
+                    for (int i = 0; i < rideList.size(); i++) {
+                      if (rideList.get(i).getStartingTime().equals(time) &&
+                              rideList.get(i).getDriverName().equals(name)) {
+                            rideList.set(i, ride);
+                            break;
+                       }
+                    }
+                    notifyDataChange.OnDataChanged(rideList);
+                }
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    Ride ride = dataSnapshot.getValue(Ride.class);
+                    String name = ride.getDriverName();
+                    String time = ride.getStartingTime();
+                    for (int i = 0; i < rideList.size(); i++) {
+                        if (rideList.get(i).getDriverName().equals(name) &&
+                                rideList.get(i).getDriverName().equals(name)) {
+                            rideList.remove(i);
+                            break;
+                        }
+                    }
+                    notifyDataChange.OnDataChanged(rideList);
+                }
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    notifyDataChange.onFailure(databaseError.toException());
+                }
+            };
+            rideRef.addChildEventListener(rideRefChildEventListener);
+        }
+
+    }
+    public static void stopNotifyToRideList() {
+        if (rideRefChildEventListener != null) {
+            rideRef.removeEventListener(rideRefChildEventListener);
+            rideRefChildEventListener = null;
+
         }
     }
 }

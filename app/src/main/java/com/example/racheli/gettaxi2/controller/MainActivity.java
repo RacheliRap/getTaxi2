@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
 import com.example.racheli.gettaxi2.model.entities.Driver;
+import com.example.racheli.gettaxi2.model.entities.Ride;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadSharedPreferences();
         getRegisterData();
         initTextChangeListener();
+        Firebase_DBManager db = new Firebase_DBManager();
+        List<Ride> lst = db.getRideList();
 
     }
 
@@ -83,14 +86,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == loginButton) {
-            ArrayList<Driver> list = Firebase_DBManager.getDriverList();
+            Firebase_DBManager.notifyToDriverList();
+            Firebase_DBManager d = new Firebase_DBManager();
+            ArrayList<Driver> list = d.getDriverList();
 
             //try to login using firebase function
             //singIn(emailEditext.getText().toString(), passwordEditext.getText().toString());
             //save the email and the password into shared preference
             saveSharedPreferences();
             //call new intent with the navigation drawer
-            Intent intent = new Intent(this , AvailableRidesFragment.class);
+            Intent intent = new Intent(this , NavigationDrawerActivity.class);
             //Intent intent = new Intent(this, NavigationDrawerActivity.class);
             startActivity(intent);
 

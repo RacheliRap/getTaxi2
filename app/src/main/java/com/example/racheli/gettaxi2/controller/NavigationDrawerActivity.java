@@ -86,7 +86,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
         FragmentManager fragmentManager = getFragmentManager();
 
         if (id == R.id.nav_availabe_rides) {
-           // fragmentManager.beginTransaction().replace(R.id.content_frame , new AvailableRidesFragment()).commit();
+           //fragmentManager.beginTransaction().replace(R.id.content_frame , new AvailableRidesFragment()).commit();
+            Intent intent = new Intent(this , AvailableRidesFragment.class);
+            startActivity(intent);
         } else if (id == R.id.nav_specific_rides) {
             fragmentManager.beginTransaction().replace(R.id.content_frame , new SpecificRidesFragment()).commit();
             //if the user press exit return the app to the login activity

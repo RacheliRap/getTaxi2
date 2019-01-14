@@ -1,4 +1,5 @@
 package com.example.racheli.gettaxi2.controller;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,24 +11,49 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
+//import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.example.racheli.gettaxi2.R;
+import com.example.racheli.gettaxi2.model.entities.Ride;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public class AvailableRidesFragment extends AppCompatActivity
 {
     RecyclerView recyclerView;
+    ArrayList<Ride> rideList = new ArrayList<Ride>() {};
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 //        ((MyAdapter)recyclerView.getAdapter()).onSaveInstanceState(outState);
     }
+   /* @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.available_rides_layout, null);
+        recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerView.setAdapter(new ExpendableAdapter(initDemoItems()));
+        return root;
+    }*/
+    /*@Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
 
+        recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerView.setAdapter(new ExpendableAdapter(initDemoItems()));
+    }
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }*/
+   @Override
+    public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.available_rides_layout);
@@ -44,7 +70,7 @@ public class AvailableRidesFragment extends AppCompatActivity
 //        recyclerView.setAdapter(adapter);
     }
 
-    private List<AbstractItem> initDemoItems() {
+   /* private List<AbstractItem> initDemoItems() {
         List<AbstractItem> result = new ArrayList<>(1000);
         for (int i=0;i<100;i++) {
             ExpendableItem item = new ExpendableItem();
@@ -57,7 +83,33 @@ public class AvailableRidesFragment extends AppCompatActivity
             result.add(item);
         }
         return result;
-    }
+    }*/
+   private List<AbstractItem> initDemoItems() {
+       List<AbstractItem> result = new ArrayList<>(1000);
+       for(int i=0;i<20;i++)
+       {
+           Ride ride = new Ride();
+           ride.setCreditCard(i+" 111222233334444");
+           ride.setDestination(i+" avraham shiif, jerusalem");
+           ride.setDriverName(i+" choen");
+           ride.setOrigin(i + "mhalh mall");
+           ride.setPassengerMail(i+" ride@gmail.com");
+           ride.setPhoneNumber(i+"77777777");
+           rideList.add(ride);
+       }
+
+       for (int i=0;i<20;i++) {
+           ExpendableItem item = new ExpendableItem();
+           item.location = rideList.get(i).getOrigin().toString();
+           //item.time = rideList.get(i).getStartingTime();
+           ChildItem child = new ChildItem();
+           //child.location = "Hi, im: "+ i +" and I'm a child of " + i;
+           child.location = rideList.get(i).getOrigin().toString();
+           item.childs.add(child);
+           result.add(item);
+       }
+       return result;
+   }
 
     private static class ExpendableAdapter extends RecyclerView.Adapter {
         List<AbstractItem> data;
@@ -82,10 +134,10 @@ public class AvailableRidesFragment extends AppCompatActivity
             AbstractItem item = data.get(position);
             if (item instanceof ExpendableItem){
                 ExpendableViewHolder exHolder = (ExpendableViewHolder) holder;
-                exHolder.txt.setText(item.name);
+                exHolder.txt.setText(item.location);
             }else {
                 ChildViewHolder chHolder = (ChildViewHolder) holder;
-                chHolder.txt.setText(item.name);
+                chHolder.txt.setText(item.location);
             }
         }
 
@@ -93,8 +145,6 @@ public class AvailableRidesFragment extends AppCompatActivity
         public int getItemCount() {
             return data.size();
         }
-
-
 
         enum TYPES{
             EXPENDABLE(1),CHILD(2);
@@ -114,9 +164,10 @@ public class AvailableRidesFragment extends AppCompatActivity
             TextView txt;
             public ChildViewHolder(View itemView) {
                 super(itemView);
-                txt = itemView.findViewById(R.id.child_txt);
+                txt = itemView.findViewById(R.id.dest_textView);
             }
         }
+
 
         class ExpendableViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView txt;
@@ -124,7 +175,7 @@ public class AvailableRidesFragment extends AppCompatActivity
 
             public ExpendableViewHolder(View itemView) {
                 super(itemView);
-                txt = itemView.findViewById(R.id.parent_txt);
+                txt = itemView.findViewById(R.id.parent_location);
                 btn = itemView.findViewById(R.id.expendable_btn);
                 btn.setOnClickListener(this);
             }
@@ -147,13 +198,15 @@ public class AvailableRidesFragment extends AppCompatActivity
     }
 
     private abstract class AbstractItem {
-        String name;
+        String location;
+        //String time;
     }
     private class ExpendableItem extends AbstractItem {
         public boolean isOpen;
         List<ChildItem> childs = new ArrayList<>();
     }
     private class ChildItem extends AbstractItem  {
+
     }
 
 
