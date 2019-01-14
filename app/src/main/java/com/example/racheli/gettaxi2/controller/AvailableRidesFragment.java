@@ -190,7 +190,7 @@ public class AvailableRidesFragment extends AppCompatActivity
                     item.isOpen = false;
                 }else {
                     data.addAll(getAdapterPosition()+1, item.childs);
-                    notifyItemRangeInserted(getAdapterPosition(), numOfChildes);
+                    notifyItemRangeInserted(getAdapterPosition()+1, numOfChildes);
                     item.isOpen = true;
                 }
             }
