@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
+import com.example.racheli.gettaxi2.model.backend.Backend;
+import com.example.racheli.gettaxi2.model.backend.BackendFactory;
 import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
 import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
@@ -28,6 +30,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
+    List<Driver> list = new ArrayList<>();
+
 
     private EditText emailEditext;
     private EditText passwordEditext;
@@ -57,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadSharedPreferences();
         getRegisterData();
         initTextChangeListener();
-        Firebase_DBManager db = new Firebase_DBManager();
-        List<Ride> lst = db.getRideList();
+        //Firebase_DBManager db = new Firebase_DBManager();
+        //List<Ride> lst = db.getRideList();
 
     }
 
@@ -86,9 +90,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == loginButton) {
-            Firebase_DBManager.notifyToDriverList();
-            Firebase_DBManager d = new Firebase_DBManager();
-            ArrayList<Driver> list = d.getDriverList();
+            Backend fb  = BackendFactory.getInstance();
+            list = fb.getDrivers();
+            List<Ride> rides = fb.getRides();
+
+            //Firebase_DBManager.notifyToRidesList();
+           // list =  Firebase_DBManager.getDriverList();
+            //Firebase_DBManager d = new Firebase_DBManager();
+
+          ///  list = d.getDriverList();
 
             //try to login using firebase function
             //singIn(emailEditext.getText().toString(), passwordEditext.getText().toString());

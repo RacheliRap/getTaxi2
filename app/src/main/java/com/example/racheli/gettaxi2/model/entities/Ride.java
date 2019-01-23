@@ -11,22 +11,11 @@ public class Ride implements java.io.Serializable{
         AVAILABLE, ON, DONE
     }
 
-    //private static final long serialVersionUID = 1L;
-    //private Long ID;
-    private String driverName;
-    private String status;
-    private String origin;
-    private String destination;
-    private String startingTime = "";
-    private String endingTime = "";
-    private String passengerName;
-    private String passengerMail;
-    private String phoneNumber;
-    private String creditCard;
-
-    public Ride(String origin, String destination, String endingTime, String passengerName, String passengerMail, String phoneNumber, String creditCard) {
+    public Ride(String origin, String destination, String startingTime, String endingTime,
+                String passengerName, String passengerMail, String phoneNumber, String creditCard) {
         this.origin = origin;
         this.destination = destination;
+        this.startingTime = startingTime;
         this.endingTime = endingTime;
         this.passengerName = passengerName;
         this.passengerMail = passengerMail;
@@ -34,6 +23,46 @@ public class Ride implements java.io.Serializable{
         this.creditCard = creditCard;
     }
 
+    private static final long serialVersionUID = 1L;
+    //private Long ID;
+    private String driverName;
+    private String status ;
+    private String origin;
+    private String destination;
+    private String startingTime ;
+    private String endingTime ;
+    private String passengerName;
+    private String passengerMail;
+    private String phoneNumber;
+    private String creditCard;
+
+    public Ride(){}
+
+    public Ride(String origin, String destination, String startingTime,
+                String passengerName, String passengerMail, String phoneNumber, String creditCard) {
+
+        this.origin = origin;
+        this.destination = destination;
+        this.startingTime = startingTime;
+        this.passengerName = passengerName;
+        this.passengerMail = passengerMail;
+        this.phoneNumber = phoneNumber;
+        this.creditCard = creditCard;
+    }
+
+    public Ride(String driverName, String status, String origin, String destination, String startingTime,
+                String endingTime, String passengerName, String passengerMail, String phoneNumber, String creditCard) {
+        this.driverName = driverName;
+        this.status = status;
+        this.origin = origin;
+        this.destination = destination;
+        this.startingTime = startingTime;
+        this.endingTime = endingTime;
+        this.passengerName = passengerName;
+        this.passengerMail = passengerMail;
+        this.phoneNumber = phoneNumber;
+        this.creditCard = creditCard;
+    }
 
     public String getDriverName() {
         return driverName;
@@ -121,18 +150,7 @@ public class Ride implements java.io.Serializable{
         this.creditCard = creditCard;
     }
 
-    public Ride(){}
 
-    @Exclude
-    public Map<String, Object> toMap(){
-        HashMap<String, Object> results = new HashMap<>();
-        results.put("Name", getPassengerName());
-        results.put("Origin:", getOrigin());
-        results.put("Destination:", getDestination());
-        results.put("Time", getEndingTime());
-        results.put("Phone number", getPhoneNumber());
-        results.put("email", getPassengerMail());
-        results.put("Credit card", getCreditCard());
-        return results;
-    }
+
+
 }
