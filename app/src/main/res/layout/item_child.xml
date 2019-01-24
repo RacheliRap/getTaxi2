@@ -18,13 +18,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingLeft="16dp">
 
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:stretchColumns="1.6"
     android:background="@drawable/list_child_backround">
     <TableRow>
 
@@ -40,11 +40,12 @@
 
             />
         <TextView
+            tools:text="home sweet home"
             android:id="@+id/dest_textView"
             android:layout_width="357dp"
             android:layout_height="match_parent"
-            android:gravity="right"
-            android:paddingLeft="16dp"
+            android:gravity="center|start"
+            android:paddingStart="16dp"
 
             />
     </TableRow>
@@ -63,11 +64,12 @@
             />
 
         <TextView
+            tools:text="somwere far far away"
             android:id="@+id/loc_textView"
             android:layout_width="357dp"
             android:layout_height="match_parent"
-            android:gravity="right"
-            android:paddingLeft="16dp"
+            android:gravity="center|start"
+            android:paddingStart="16dp"
             />
 
     </TableRow>
