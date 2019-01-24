@@ -2,10 +2,13 @@ package com.example.racheli.gettaxi2.controller;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText passwordEditext;
     private Button loginButton;
     private Button registerButton;
+    private Toolbar toolbar;
 
     /**
      * Find the Views in the layout
@@ -47,7 +51,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         passwordEditext = (EditText) findViewById(R.id.password_edittext);
         loginButton = (Button) findViewById(R.id.login_button);
         registerButton = (Button) findViewById(R.id.register_button);
-
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("My Cab");
+        setSupportActionBar(toolbar);
         //sign up the buttons to Listener event
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
@@ -105,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //save the email and the password into shared preference
             saveSharedPreferences();
             //call new intent with the navigation drawer
-            Intent intent = new Intent(this , NavigationDrawerActivity.class);
+            Intent intent = new Intent(this , RegisterActivity.class);
             //Intent intent = new Intent(this, NavigationDrawerActivity.class);
             startActivity(intent);
 

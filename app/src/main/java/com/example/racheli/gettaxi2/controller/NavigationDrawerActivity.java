@@ -2,6 +2,7 @@ package com.example.racheli.gettaxi2.controller;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -87,8 +88,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         if (id == R.id.nav_availabe_rides) {
            //fragmentManager.beginTransaction().replace(R.id.content_frame , new AvailableRidesFragment()).commit();
-            Intent intent = new Intent(this , AvailableRidesFragment.class);
-            startActivity(intent);
+            //Intent intent = new Intent(this , AvailableRidesFragment.class);
+            //startActivity(intent);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new SearchFragment()).commit();
         } else if (id == R.id.nav_specific_rides) {
             fragmentManager.beginTransaction().replace(R.id.content_frame , new SpecificRidesFragment()).commit();
             //if the user press exit return the app to the login activity
@@ -96,7 +98,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
             //fragmentManager.beginTransaction().replace(R.id.content_frame , new ExitFragment()).commit();
             Intent intent = new Intent(this , MainActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_browse_online) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://gett.com/il/about/"));
+            startActivity(browserIntent);
 
         } else if (id == R.id.nav_send) {
 

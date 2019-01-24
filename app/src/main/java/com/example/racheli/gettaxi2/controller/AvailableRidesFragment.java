@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,76 +85,7 @@ public class AvailableRidesFragment extends Activity
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }*/
-   /* public void getLocation()
-    {
-        //connect to system location service
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        //listener to location change
-        locationListener = new LocationListener(){
 
-            @Override
-            public void onLocationChanged(Location location) {
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        //     Check the SDK version and whether the permission is already granted or not.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
-            } else {
-
-            // Android version is lesser than 6.0 or the permission is already granted.
-        }
-        //call the function to find current location
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-
-    }
-        @SuppressLint("MissingPermission")
-        @Override
-	    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    	      if (requestCode == 5) {
-        	       if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-           	                // Permission is granted
-            	         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0, locationListener);
-            	            } else {
-           	                Toast.makeText(this, "Until you grant the permission, we cannot display the location", Toast.LENGTH_SHORT).show();
-                        }
-               }
-      }
-	public String getPlace(Location location) {
-   	        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-    	        List<Address> addresses = null;
-            try {
-               addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-        	            if (addresses.size() > 0) {
-            	                String cityName = addresses.get(0).getAddressLine(0);
-            	                String stateName = addresses.get(0).getAddressLine(1);
-            	                String countryName = addresses.get(0).getAddressLine(2);
-                            return stateName + "\n" + cityName + "\n" + countryName;
-           	            }
-                    return "no place: \n ("+location.getLongitude()+" , "+location.getLatitude()+")";
-                }
-         catch (IOException e)
-         {
-             e.printStackTrace();
-         }
-          return "IOException ...";
-    }*/
 
 
 
@@ -280,6 +212,7 @@ public class AvailableRidesFragment extends Activity
     private class ChildItem extends Ride  {
 
     }
+
 
 
 }

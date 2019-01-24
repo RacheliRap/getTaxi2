@@ -7,25 +7,13 @@
     android:orientation="vertical"
     tools:context=".controller.RegisterActivity">
 
-
-    <TextView
-        android:id="@+id/register_textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/register_textview"
-        android:textColor="@color/wine"
-        android:textSize="30sp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:background="@color/yellow"
-        android:fontFamily="@font/aladin"
-        />
+<include layout="@layout/toolbar"
+    android:id="@+id/toolbar"></include>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="2.5" />
 
     <EditText
         android:id="@+id/fullName"
@@ -114,7 +102,7 @@
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1.5" />
 
     <Button
         android:id="@+id/register_button"

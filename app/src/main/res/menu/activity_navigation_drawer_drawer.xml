@@ -11,6 +11,9 @@
             android:id="@+id/nav_specific_rides"
             android:title="Specific Rides" />
         <item
+            android:id="@+id/nav_browse_online"
+            android:title="Visit Us Online" />
+        <item
             android:id="@+id/nav_exit"
             android:title="Exit" />
 

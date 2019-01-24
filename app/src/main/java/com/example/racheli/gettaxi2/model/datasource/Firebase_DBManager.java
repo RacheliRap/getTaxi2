@@ -22,6 +22,7 @@ import com.google.firebase.database.Query;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Firebase_DBManager implements Backend {
@@ -98,7 +99,82 @@ public class Firebase_DBManager implements Backend {
         });
         return rideList;
     }
-   public List<Driver> getDrivers()
+
+    @Override
+    public ArrayList<Ride> getAvailableRides() {
+        ArrayList<Ride> availableRides = new ArrayList<>();
+        for(Ride r : rideList)
+        {
+            if(r.getStatus() == "AVAILABLE")
+            {
+                availableRides.add(r);
+            }
+        }
+        return availableRides;
+    }
+
+    @Override
+    public ArrayList<String> getDriversNames() {
+        ArrayList<String> driversNames = new ArrayList<>();
+        for(Driver d: driverList)
+        {
+            driversNames.add(d.getFullName());
+        }
+        return driversNames;
+    }
+
+    @Override
+    public ArrayList<Ride> getUnhandledRides() {
+        ArrayList<Ride> availableRides = new ArrayList<>();
+        for(Ride r : rideList)
+        {
+            if(r.getStatus() == "AVAILABLE")
+            {
+                availableRides.add(r);
+            }
+        }
+        return availableRides;
+    }
+
+    @Override
+    public ArrayList<Ride> getFinishedRides() {
+        ArrayList<Ride> finishedRides = new ArrayList<>();
+        for(Ride r : rideList)
+        {
+            if(r.getStatus() == "DONE")
+            {
+                finishedRides.add(r);
+            }
+        }
+        return finishedRides;
+    }
+
+    @Override
+    public ArrayList<Ride> getRidesByDriver(String driverName) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Ride> getRidesByCity(String city) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Ride> getRidesByDistance(float distance) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Ride> getRidesByDate(Date date) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Ride> getRidesByPayment(float payment) {
+        return null;
+    }
+
+    public List<Driver> getDrivers()
    {
        notifyToDriverList(new NotifyDataChange<List<Driver>>() {
            @Override
