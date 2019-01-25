@@ -1,10 +1,5 @@
 package com.example.racheli.gettaxi2.model.entities;
 
-import com.google.firebase.database.Exclude;
-
-import java.util.HashMap;
-import java.util.Map;
-
 //Ride class.
 public class Ride implements java.io.Serializable{
     enum  Status{
@@ -72,9 +67,9 @@ public class Ride implements java.io.Serializable{
         this.driverName = driverName;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+//    public void setStatus(String status) {
+//        this.status = status;
+//    }
 
 
     public String getStatus() {

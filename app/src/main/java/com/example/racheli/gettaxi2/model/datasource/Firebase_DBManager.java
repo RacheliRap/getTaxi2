@@ -1,9 +1,8 @@
 package com.example.racheli.gettaxi2.model.datasource;
 
 import android.support.annotation.NonNull;
-import android.widget.Toast;
+import android.util.Log;
 
-import com.example.racheli.gettaxi2.controller.MainActivity;
 import com.example.racheli.gettaxi2.model.backend.Backend;
 import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
@@ -14,12 +13,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-
-
-import com.google.firebase.database.Query;
-
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +21,7 @@ import java.util.List;
 public class Firebase_DBManager implements Backend {
 
 
+    private static final String TAG = "Firebase_DBManager";
     static List<Driver> driverList = new ArrayList<Driver>();
     static List<Ride> rideList = new ArrayList<Ride>();
     private static ChildEventListener driverRefChildEventListener;
@@ -89,11 +83,13 @@ public class Firebase_DBManager implements Backend {
        notifyToRideList(new NotifyDataChange<List<Ride>>() {
             @Override
             public void OnDataChanged(List<Ride> obj) {
+                Log.d(TAG, "OnDataChanged() called with: obj = [" + obj.size() + "]");
 
             }
 
             @Override
             public void onFailure(Exception exception) {
+                Log.d(TAG, "onFailure() called with: exception = [" + exception + "]");
 
             }
         });
@@ -179,11 +175,13 @@ public class Firebase_DBManager implements Backend {
        notifyToDriverList(new NotifyDataChange<List<Driver>>() {
            @Override
            public void OnDataChanged(List<Driver> obj) {
+               Log.d(TAG, "OnDataChanged() called with: obj = [" + obj.size() + "]");
 
            }
 
            @Override
            public void onFailure(Exception exception) {
+               Log.d(TAG, "onFailure() called with: exception = [" + exception + "]");
 
            }
        });
