@@ -96,9 +96,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == loginButton) {
-            Backend fb  = BackendFactory.getInstance();
-            list = fb.getDrivers();
-            List<Ride> rides = fb.getRides();
+            //Backend fb  = BackendFactory.getInstance();
+            //list = fb.getDrivers();
+           // List<Ride> rides = fb.getRides();
 
             //Firebase_DBManager.notifyToRidesList();
            // list =  Firebase_DBManager.getDriverList();
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //save the email and the password into shared preference
             saveSharedPreferences();
             //call new intent with the navigation drawer
-            Intent intent = new Intent(this , RegisterActivity.class);
+            Intent intent = new Intent(this , NavigationDrawerActivity.class);
             //Intent intent = new Intent(this, NavigationDrawerActivity.class);
             startActivity(intent);
 

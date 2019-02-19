@@ -40,13 +40,12 @@
         android:id="@+id/password_edittext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:drawableLeft="@drawable/ic_action_password"
         android:ems="10"
         android:hint="@string/login_password"
         android:inputType="textPassword"
-        android:textColor="@color/wine"
-        android:layout_gravity="center"
-        />
+        android:textColor="@color/wine" />
     <Space
         android:layout_width="wrap_content"
         android:layout_height="40dp"
@@ -67,14 +66,18 @@
         android:layout_gravity="center"
         />
 
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="10dp"
+        />
     <Button
         android:id="@+id/register_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginBottom="74dp"
         android:background="@android:color/background_light"
-        android:text="@string/login_register_button"
-        android:layout_gravity="center"/>
+        android:text="@string/login_register_button" />
 
 
 </LinearLayout>

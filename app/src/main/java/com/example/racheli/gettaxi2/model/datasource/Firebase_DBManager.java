@@ -188,65 +188,6 @@ public class Firebase_DBManager implements Backend {
        return driverList;
    }
 
-    /*public static void notifyToDriverList(final NotifyDataChange<List<Driver>> notifyDataChange) {
-        if (notifyDataChange != null) {
-            if (driverRefChildEventListener != null) {
-                notifyDataChange.onFailure(new Exception("first unNotify student list"));
-                return;
-            }
-            driverList.clear();
-            rideRefChildEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Driver driver = dataSnapshot.getValue(Driver.class);
-                    String id = dataSnapshot.getKey();
-                    //  driver.setId((id));
-                    driverList.add(driver);
-                    notifyDataChange.OnDataChanged(driverList);
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Driver driver = dataSnapshot.getValue(Driver.class);
-                    //Long id = Long.parseLong(dataSnapshot.getKey());
-                    //Driver.setId(id);
-                    for (int i = 0; i < driverList.size(); i++) {
-                        if (driverList.get(i).getId().equals(driver.getId())) {
-                            driverList.set(i, driver);
-                            break;
-                        }
-                    }
-                    notifyDataChange.OnDataChanged(driverList);
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Driver driver = dataSnapshot.getValue(Driver.class);
-                    //Long id = Long.parseLong(dataSnapshot.getKey());
-                    //student.setId(id.toString());
-                    for (int i = 0; i < driverList.size(); i++) {
-                        if (driverList.get(i).getId().equals(driver.getId())) {
-                            driverList.remove(i);
-                            break;
-                        }
-                    }
-                    notifyDataChange.OnDataChanged(driverList);
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    notifyDataChange.onFailure(databaseError.toException());
-                }
-            };
-            driverRef.addChildEventListener(driverRefChildEventListener);//falls here
-        }
-    }*/
-
-
     public static void stopNotifyToRideList() {
         if (rideRefChildEventListener != null) {
             rideRef.removeEventListener(rideRefChildEventListener);

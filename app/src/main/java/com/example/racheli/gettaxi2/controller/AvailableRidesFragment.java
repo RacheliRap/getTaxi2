@@ -2,8 +2,12 @@ package com.example.racheli.gettaxi2.controller;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -20,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,75 +45,133 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
+import static android.app.PendingIntent.getActivity;
+
 public class AvailableRidesFragment extends Activity
 {
     RecyclerView recyclerView;
-    LocationListener locationListener;
-    LocationManager locationManager;
     ArrayList<Ride> rideList = new ArrayList<Ride>() {};
+    double longitude = 0;
+    double latitude;
+    Location locationA;
+    Location location;
+    View view;
+    Context context;
+
 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-    @Override
+
+   @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.available_rides_layout);
-
+        context = this;
         recyclerView = (RecyclerView) findViewById(R.id.myRecyclerView);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new ExpendableAdapter(initDemoItems()));
-       // getLocation();
+        //getLocation();
     }
-    /*@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.available_rides_layout, null);
-        recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        recyclerView.setAdapter(new ExpendableAdapter(initDemoItems()));
-        return root;
-    }*/
-    /*@Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    private void getLocation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
+        } else {
 
-        recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
+            // Android version is lesser than 6.0 or the permission is already granted.
+        }
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        recyclerView.setAdapter(new ExpendableAdapter(initDemoItems()));
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        final LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                if(location != null) {
+                    longitude = location.getLongitude();
+                    latitude = location.getLatitude();
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        if(locationListener != null && lm != null) {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+            location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+            }
+        }
     }
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }*/
+    public void addressToLocation(String my_address)
+    {
+        try {
+            Geocoder gc = new Geocoder(this);
+            if (gc.isPresent()) {
+                List<Address> list = gc.getFromLocationName(my_address, 1);
+                Address address = list.get(0);
+                double lat = address.getLatitude();
+                double lng = address.getLongitude();
+                locationA = new Location("A");
+                locationA.setLatitude(lat);
+                locationA.setLongitude(lng);
+            }
+        } catch (Exception e)
+        {
+            Toast.makeText(view.getContext(), "can not convert to location", Toast.LENGTH_LONG).show();
+        }
+    }
 
+    private float calculateDistance(Location a, Location b) {
 
+        float distance = a.distanceTo(b);
+        if(distance > 1000)
+        {
+            distance = distance/1000;
+        }
+        return distance;
 
+    }
 
     private List<Ride> initDemoItems() {
        List<Ride> result = new ArrayList<>(1000);
        Backend fb  = BackendFactory.getInstance();
        List<Driver> driverList = Firebase_DBManager.getDriverList();
        List<Ride> rlist = Firebase_DBManager.getRideList();
-        for(int i=0;i<20;i++)
+        for(int i=0;i<3;i++)
        {
            Ride ride = new Ride();
            ride.setCreditCard(i+" 111222233334444");
-           ride.setDestination(i+" avraham shiif, jerusalem");
+           ride.setDestination(i+" avraham shiff, jerusalem");
            ride.setDriverName(i+" choen");
-           ride.setOrigin(i + "mhalh mall");
+           ride.setOrigin(i + "mhala mall");
            ride.setPassengerMail(i+" ride@gmail.com");
            ride.setPhoneNumber(i+"77777777");
            rideList.add(ride);
        }
 
-       for (int i=0;i<20;i++) {
+       for (int i=0;i<3;i++) {
            ExpendableItem item = new ExpendableItem();
-           item.setDestination(rideList.get(i).getOrigin().toString());
+           item.setDestination(rideList.get(i).getDestination().toString());
+            //getLocation();
+           //addressToLocation(rideList.get(i).getDestination().toString());
+           //float distance =  calculateDistance(locationA, location);
+           //item.setDistance(distance);
            //item.time = rideList.get(i).getStartingTime();
            ChildItem child = new ChildItem();
            //child.location = "Hi, im: "+ i +" and I'm a child of " + i;
@@ -142,7 +205,8 @@ public class AvailableRidesFragment extends Activity
             Ride item = data.get(position);
             if (item instanceof ExpendableItem){
                 ExpendableViewHolder exHolder = (ExpendableViewHolder) holder;
-                exHolder.txt.setText(item.getDestination());
+                exHolder.location_txt.setText(item.getDestination());
+               // exHolder.distance_txt.setText((ExpendableItem) item.getDistance());
             }else {
                 ChildViewHolder chHolder = (ChildViewHolder) holder;
                 chHolder.txt.setText(item.getDestination());
@@ -178,41 +242,88 @@ public class AvailableRidesFragment extends Activity
 
 
         class ExpendableViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            TextView txt;
+            TextView location_txt;
+            TextView distance_txt;
             ImageView btn;
+            ImageButton arrow;
+            ImageButton plus;
+            Context context;
+
 
             public ExpendableViewHolder(View itemView) {
                 super(itemView);
-                txt = itemView.findViewById(R.id.parent_location);
-                btn = itemView.findViewById(R.id.expendable_btn);
-                btn.setOnClickListener(this);
+                location_txt = itemView.findViewById(R.id.parent_location);
+                distance_txt = itemView.findViewById(R.id.parent_dist);
+                //btn = itemView.findViewById(R.id.expendable_btn);
+               // btn.setOnClickListener(this);
+                arrow = itemView.findViewById(R.id.expendable_btn);
+                arrow.setOnClickListener(this);
+                plus = itemView.findViewById(R.id.getRide_btn);
+                plus.setOnClickListener(this);
+
             }
 
             @Override
             public void onClick(View v) {
-                ExpendableItem item = ((ExpendableItem)data.get(getAdapterPosition()));
-                int numOfChildes = item.childs.size();
-                if (item.isOpen){
-                    data.removeAll(item.childs);
-                    notifyItemRangeRemoved(getAdapterPosition()+1, numOfChildes);
-                    item.isOpen = false;
-                }else {
-                    data.addAll(getAdapterPosition()+1, item.childs);
-                    notifyItemRangeInserted(getAdapterPosition()+1, numOfChildes);
-                    item.isOpen = true;
+                //the button for expend the list view
+                if( v == arrow) {
+                    ExpendableItem item = ((ExpendableItem) data.get(getAdapterPosition()));
+                    int numOfChildes = item.childs.size();
+                    if (item.isOpen) {
+                        data.removeAll(item.childs);
+                        notifyItemRangeRemoved(getAdapterPosition() + 1, numOfChildes);
+                        item.isOpen = false;
+                    } else {
+                        data.addAll(getAdapterPosition() + 1, item.childs);
+                        notifyItemRangeInserted(getAdapterPosition() + 1, numOfChildes);
+                        item.isOpen = true;
+                    }
                 }
+                //the button to get the ride
+                if(v == plus) {
+                       // Toast.makeText(context, "hi", Toast.LENGTH_LONG).show();
+                        /*AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                        alertDialogBuilder.setTitle("dialog title");
+                        alertDialogBuilder.setMessage("dialog message ....");
+                        alertDialogBuilder.setPositiveButton("Ok",onClickListener);
+                        alertDialogBuilder.setNegativeButton("Cancel ",onClickListener);
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();*/
+                    }
+
             }
+            AlertDialog.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch(which)
+                    {
+                        case Dialog.BUTTON_NEGATIVE:
+                        {
+
+                        }
+                    }
+
+                } };
         }
     }
 
     private class ExpendableItem extends Ride {
         public boolean isOpen;
+        Float distance;
         List<ChildItem> childs = new ArrayList<>();
+
+        public void setDistance(Float distance) {
+            this.distance = distance;
+        }
+
+        public Float getDistance() {
+            return distance;
+        }
     }
     private class ChildItem extends Ride  {
 
     }
-
 
 
 }
