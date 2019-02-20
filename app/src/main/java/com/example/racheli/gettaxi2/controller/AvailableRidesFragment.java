@@ -1,11 +1,9 @@
 package com.example.racheli.gettaxi2.controller;
+
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -17,19 +15,16 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.backend.Backend;
 import com.example.racheli.gettaxi2.model.backend.BackendFactory;
@@ -37,15 +32,10 @@ import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
 import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
 
-import static android.app.PendingIntent.getActivity;
+//import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 
 public class AvailableRidesFragment extends Activity
 {
@@ -76,16 +66,15 @@ public class AvailableRidesFragment extends Activity
         recyclerView.setAdapter(new ExpendableAdapter(initDemoItems()));
         //getLocation();
     }
+
+
     private void getLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
-        } else {
-
-            // Android version is lesser than 6.0 or the permission is already granted.
+            return; // has no permission it will crash if we will try to access it
         }
 
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 if(location != null) {
@@ -109,7 +98,9 @@ public class AvailableRidesFragment extends Activity
 
             }
         };
-        if(locationListener != null && lm != null) {
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if(lm != null) {
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
             location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (location != null) {
@@ -118,6 +109,16 @@ public class AvailableRidesFragment extends Activity
             }
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 5){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                getLocation();
+            }
+        }
+    }
+
     public void addressToLocation(String my_address)
     {
         try {
