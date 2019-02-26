@@ -22,23 +22,12 @@
     android:orientation="vertical"
     android:paddingLeft="16dp">
 
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_child_backround">
     <TableRow>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:showDividers="middle"
-            android:text=" Destination:"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:drawableLeft="@drawable/ic_donut_large_black_24dp"
-            android:paddingLeft="16dp"
-
-            />
         <TextView
             tools:text="home sweet home"
             android:id="@+id/dest_textView"
@@ -53,17 +42,6 @@
     <TableRow>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:drawableLeft="@drawable/ic_location_on"
-            android:gravity="center"
-            android:padding="3dip"
-            android:text="Location:"
-            android:textSize="20sp"
-            android:paddingLeft="16dp"
-            />
-
-        <TextView
             tools:text="somwere far far away"
             android:id="@+id/loc_textView"
             android:layout_width="357dp"
@@ -74,13 +52,34 @@
 
     </TableRow>
 
-</TableLayout>
+</TableLayout>-->
 
-    <Button
-        android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:text="get Ride!"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:background="@drawable/list_child_backround" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/time_textView"
+        android:textColor="@color/wine"
+        android:textSize="16sp"
+        android:gravity="center|start"
+        android:paddingStart="16dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/dest_textView"
+        android:textColor="@color/wine"
+        android:textSize="16sp"
+        android:gravity="center|start"
+        android:paddingStart="16dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/phoneNumber_textView"
+        android:textColor="@color/wine"
+        android:textSize="16sp"
+        android:gravity="center|start"
+        android:paddingStart="16dp"
+        />
+
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.racheli.gettaxi2.controller;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.backend.Backend;
@@ -35,7 +37,6 @@ public class SearchFragment extends android.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @NonNull ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_search, container, false);
-
         return view;
     }
 
@@ -44,8 +45,15 @@ public class SearchFragment extends android.app.Fragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(new SearchFragment.ExpendableAdapter(initDemoItems()));
-        List<Ride> myRides = Firebase_DBManager.getRideList();
+        recyclerView.setAdapter(new ExpendableAdapter(initDemoItems()));
+        context = getActivity();
+       // List<Ride> myRides = Firebase_DBManager.getRideList();
+    }
+    @Override
+    public void onAttach(Activity activity) {
+        // TODO Auto-generated method stub
+        super.onAttach(activity);
+        context=activity;
     }
 
     private List<Ride> initDemoItems() {
@@ -54,23 +62,56 @@ public class SearchFragment extends android.app.Fragment {
         Firebase_DBManager db = new Firebase_DBManager();
         List<Ride> rideList = Firebase_DBManager.getRideList();
         List<Driver> driverList = Firebase_DBManager.getDriverList();
+        for(int i = 0; i < 3; i++)
+        {
+            Ride ride = new Ride();
+            ride.setDestination(i + " Avraham shiff St, Jerusalem");
+            ride.setPhoneNumber("0507270820");
+            ride.setOrigin(i + "Beit hadfus, Jerusalem");
+            ride.setStartingTime("15:00");
+            rideList.add(ride);
+        }
 
 
         for (int i = 0; i < 3; i++) {
-            SearchFragment.ExpendableItem item = new SearchFragment.ExpendableItem();
+            ExpendableItem item = new SearchFragment.ExpendableItem();
             item.setDestination(rideList.get(i).getDestination().toString());
             //getLocation();
             //addressToLocation(rideList.get(i).getDestination().toString());
             //float distance =  calculateDistance(locationA, location);
             //item.setDistance(distance);
             //item.time = rideList.get(i).getStartingTime();
-            SearchFragment.ChildItem child = new SearchFragment.ChildItem();
+            ChildItem child = new ChildItem();
             child.setDestination(rideList.get(i).getOrigin().toString());
+            child.setStartingTime(rideList.get(i).getStartingTime());
+            child.setPhoneNumber(rideList.get(i).getPhoneNumber());
             item.childs.add(child);
             result.add(item);
         }
         return result;
     }
+   public void showToast()
+    {
+        Toast.makeText(context, "hi", Toast.LENGTH_LONG).show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("dialog title");
+        alertDialogBuilder.setMessage("dialog message ....");
+        alertDialogBuilder.setPositiveButton("Ok",onClickListener);
+        alertDialogBuilder.setNegativeButton("Cancel ",onClickListener);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+    AlertDialog.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case Dialog.BUTTON_NEGATIVE: {
+
+                }
+            }
+        }
+    };
 
     private static class ExpendableAdapter extends RecyclerView.Adapter {
         List<Ride> data;
@@ -100,7 +141,9 @@ public class SearchFragment extends android.app.Fragment {
                 // exHolder.distance_txt.setText((ExpendableItem) item.getDistance());
             } else {
                 SearchFragment.ExpendableAdapter.ChildViewHolder chHolder = (SearchFragment.ExpendableAdapter.ChildViewHolder) holder;
-                chHolder.txt.setText(item.getDestination());
+                chHolder.dest.setText(item.getDestination());
+                chHolder.phoneNumber.setText(item.getPhoneNumber());
+                chHolder.time.setText(item.getStartingTime());
             }
         }
 
@@ -126,11 +169,15 @@ public class SearchFragment extends android.app.Fragment {
 
 
         class ChildViewHolder extends RecyclerView.ViewHolder {
-            TextView txt;
+            TextView dest;
+            TextView time;
+            TextView phoneNumber;
 
             public ChildViewHolder(View itemView) {
                 super(itemView);
-                txt = itemView.findViewById(R.id.dest_textView);
+                dest = itemView.findViewById(R.id.dest_textView);
+                time = itemView.findViewById(R.id.time_textView);
+                phoneNumber = itemView.findViewById(R.id.phoneNumber_textView);
             }
         }
 
@@ -175,8 +222,10 @@ public class SearchFragment extends android.app.Fragment {
                 }
                 //the button to get the ride
                 if (v == plus) {
+                    SearchFragment searchFragment = new SearchFragment();
+                    searchFragment.showToast();
                     // Toast.makeText(context, "hi", Toast.LENGTH_LONG).show();
-                        /*AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                      /*  AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                         alertDialogBuilder.setTitle("dialog title");
                         alertDialogBuilder.setMessage("dialog message ....");
                         alertDialogBuilder.setPositiveButton("Ok",onClickListener);
@@ -186,25 +235,10 @@ public class SearchFragment extends android.app.Fragment {
                 }
 
             }
-
-            AlertDialog.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case Dialog.BUTTON_NEGATIVE: {
-
-                        }
-                    }
-
-                }
-            };
         }
     }
 
-    private class ChildItem extends Ride {
-
-    }
+    private class ChildItem extends Ride { }
 
     private class ExpendableItem extends Ride {
         public boolean isOpen;
@@ -219,5 +253,4 @@ public class SearchFragment extends android.app.Fragment {
             return distance;
         }
     }
-
 }
