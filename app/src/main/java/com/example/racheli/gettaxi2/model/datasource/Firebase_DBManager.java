@@ -37,20 +37,6 @@ public class Firebase_DBManager implements Backend {
         rideRef = database.getReference("rides");
     }
 
-   /* public Firebase_DBManager() {
-        notifyToDriverList(new NotifyDataChange<List<Driver>>() {
-            @Override
-            public void OnDataChanged(List<Driver> obj) {
-
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-
-            }
-        });
-        // notifyToDriverList();
-    }*/
 
     public static List<Driver> getDriverList() {
         return driverList;
@@ -58,6 +44,12 @@ public class Firebase_DBManager implements Backend {
 
     public static List<Ride> getRideList() {
         return rideList;
+    }
+
+    public Firebase_DBManager()
+    {
+        getDrivers();
+        getRides();
     }
 
     @Override

@@ -6,18 +6,6 @@ public class Ride implements java.io.Serializable{
         AVAILABLE, ON, DONE
     }
 
-    public Ride(String origin, String destination, String startingTime, String endingTime,
-                String passengerName, String passengerMail, String phoneNumber, String creditCard) {
-        this.origin = origin;
-        this.destination = destination;
-        this.startingTime = startingTime;
-        this.endingTime = endingTime;
-        this.passengerName = passengerName;
-        this.passengerMail = passengerMail;
-        this.phoneNumber = phoneNumber;
-        this.creditCard = creditCard;
-    }
-
     private static final long serialVersionUID = 1L;
     //private Long ID;
     private String driverName;
@@ -32,6 +20,18 @@ public class Ride implements java.io.Serializable{
     private String creditCard;
 
     public Ride(){}
+
+    public Ride(String origin, String destination, String startingTime, String endingTime,
+                String passengerName, String passengerMail, String phoneNumber, String creditCard) {
+        this.origin = origin;
+        this.destination = destination;
+        this.startingTime = startingTime;
+        this.endingTime = endingTime;
+        this.passengerName = passengerName;
+        this.passengerMail = passengerMail;
+        this.phoneNumber = phoneNumber;
+        this.creditCard = creditCard;
+    }
 
     public Ride(String origin, String destination, String startingTime,
                 String passengerName, String passengerMail, String phoneNumber, String creditCard) {
@@ -67,11 +67,6 @@ public class Ride implements java.io.Serializable{
         this.driverName = driverName;
     }
 
-//    public void setStatus(String status) {
-//        this.status = status;
-//    }
-
-
     public String getStatus() {
         return status;
     }
@@ -87,7 +82,6 @@ public class Ride implements java.io.Serializable{
     public void setStartingTime(String startingTime) {
         this.startingTime = startingTime;
     }
-
 
     public String getOrigin() {
         return origin;
@@ -144,8 +138,5 @@ public class Ride implements java.io.Serializable{
     public void setCreditCard(String creditCard) {
         this.creditCard = creditCard;
     }
-
-
-
 
 }

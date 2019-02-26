@@ -3,24 +3,19 @@ package com.example.racheli.gettaxi2.model.entities;
 public class Driver implements java.io.Serializable{
 
     private static final long serialVersionUID = 1L;
-
-    //private String lastName;
-    //private String firstName;
     private String fullName;
     private String id;
     private String phoneNumber;
     private String email;
     private String cCardNumber;
-    private String userName;
     private String password;
 
-    public Driver(String fullName, String id, String phoneNumber, String email, String cCardNumber, String userName, String password) {
+    public Driver(String fullName, String id, String phoneNumber, String email, String cCardNumber, String password) {
         this.fullName = fullName;
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.cCardNumber = cCardNumber;
-        this.userName = userName;
         this.password = password;
     }
 
@@ -30,14 +25,6 @@ public class Driver implements java.io.Serializable{
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getPassword() {
