@@ -65,7 +65,7 @@
               android:textColor="@color/white" />-->
         </LinearLayout>
 
-        <ImageButton
+        <ImageView
             android:id="@+id/expendable_btn"
             android:layout_width="34dp"
             android:layout_height="23dp"
@@ -75,7 +75,7 @@
             android:src="@drawable/ic_arrow_drop_down_white_24dp"
             android:visibility="visible" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/getRide_btn"
             android:layout_width="34dp"
             android:layout_height="23dp"

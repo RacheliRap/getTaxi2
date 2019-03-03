@@ -13,27 +13,42 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
+
 import java.util.List;
 
 public class LocationHandle extends Activity{
     double longitude;
     double latitude;
-    private Location locationA;
+    private Location destLocation;
+    private Location originLocation;
     private Location myLocation;
     View view;
     Context context;
+
+
 
     public LocationHandle(Context context) {
         this.context = context;
     }
 
-    public Location getLocationA() {
-        return locationA;
+    public Location getDestLocation() {
+        return destLocation;
     }
 
     public Location getMyLocation() {
         getLocation();
         return myLocation;
+    }
+    public Location getOriginLocation() {
+        return originLocation;
+    }
+
+    public void setOriginLocation(Location originLocation) {
+        this.originLocation = originLocation;
+    }
+
+    public void setDestLocation(Location destLocation) {
+        this.destLocation = destLocation;
     }
 
     private void getLocation() {
@@ -87,8 +102,9 @@ public class LocationHandle extends Activity{
                 }
         }
 
-        public void addressToLocation(String my_address)
+        public Location addressToLocation(String my_address)
         {
+            Location tempLocation = null;
                 try {
                         Geocoder gc = new Geocoder(context);
                         if (gc.isPresent()) {
@@ -96,19 +112,22 @@ public class LocationHandle extends Activity{
                                 Address address = list.get(0);
                                 double lat = address.getLatitude();
                                 double lng = address.getLongitude();
-                                locationA = new Location("A");
-                                locationA.setLatitude(lat);
-                                locationA.setLongitude(lng);
+                                tempLocation = new Location("A");
+                                tempLocation.setLatitude(lat);
+                                tempLocation.setLongitude(lng);
+
+
                         }
                 } catch (Exception e)
                 {
                         Toast.makeText(view.getContext(), "can not convert to location", Toast.LENGTH_LONG).show();
+
                 }
+            return tempLocation;
         }
 
         public float calculateDistance(Location a, Location b) {
 
-        if (a == null) return Float.MAX_VALUE;
                 float distance = a.distanceTo(b);
                 if(distance > 1000)
                 {

@@ -193,7 +193,7 @@ public class AvailableRidesFragment extends Activity
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if(viewType == TYPES.EXPENDABLE.value){
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_expendable,parent,false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_expendable1,parent,false);
                 return new ExpendableViewHolder(view);
             }else{
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_child,parent,false);

@@ -1,7 +1,6 @@
 package com.example.racheli.gettaxi2.controller;
 
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -88,13 +87,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         FragmentManager fragmentManager = getFragmentManager();
 
         if (id == R.id.nav_availabe_rides) {
-           //fragmentManager.beginTransaction().replace(R.id.content_frame , new AvailableRidesFragment()).commit();
-            //Intent intent = new Intent(this , AvailableRidesFragment.class);
-            //startActivity(intent);
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new SearchFragment()).addToBackStack(null).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FirstFragment())
+                    .addToBackStack(null).commit();
 
         } else if (id == R.id.nav_specific_rides) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame , new SpecificRidesFragment())
+            fragmentManager.beginTransaction().replace(R.id.content_frame , new SecondFragment())
             .addToBackStack(null).commit();
             //if the user press exit return the app to the login activity
         } else if (id == R.id.nav_exit) {
