@@ -1,34 +1,33 @@
 package com.example.racheli.gettaxi2.controller;
 
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.widget.Filter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.net.Uri;
 
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.entities.Ride;
@@ -59,7 +58,13 @@ public class FirstFragment extends android.app.Fragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        adapter = new ExpendableAdapter(initDemoItems());
+        adapter = new ExpendableAdapter(initDemoItems(), new ListItemClickListener() {
+            @Override
+            public void onItemClicked(ExpendableItem item) {
+                FirstFragment firstFragment = new FirstFragment();
+                firstFragment.showDialog(item);
+            }
+        });
         recyclerView.setAdapter(adapter);
         searchView = (SearchView) getView().findViewById(R.id.simpleSearchView);
         activeSearchView();
@@ -133,7 +138,7 @@ public class FirstFragment extends android.app.Fragment {
         }
         return result;
     }
-    public void showDialog(int position)
+    public void showDialog(ExpendableItem item)
     {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "567")
                 .setSmallIcon(R.drawable.transparent_icon)
@@ -146,7 +151,7 @@ public class FirstFragment extends android.app.Fragment {
         //Toast.makeText(context, "hi", Toast.LENGTH_LONG).show();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("GET RIDE");
-        String destination = rideList.get(position).getDestination();
+        String destination = item.getDestination();
         String message = "Are you sure you want to continue with the ride to " + destination + "?";
         alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setPositiveButton("Yes,I'm sure!",onClickListener);
@@ -194,12 +199,12 @@ public class FirstFragment extends android.app.Fragment {
                             Uri uri = Uri.parse("smsto:+972586367706");
                             Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
                             intent.putExtra("sms_body", "hi");
-                            startActivity(intent);
+                            context.startActivity(intent);
                             }
                     }
                     );
 
-                    new SendSmsTask().execute(1, 2, 3);
+//                    new SendSmsTask().execute(1, 2, 3);
                     break;
                 }
             }
@@ -244,10 +249,12 @@ public class FirstFragment extends android.app.Fragment {
     private static class ExpendableAdapter extends RecyclerView.Adapter implements Filterable{
         List<Ride> data;
         List<Ride> dataFull;
+        ListItemClickListener listener;
 
 
-        public ExpendableAdapter(List<Ride> data) {
+        public ExpendableAdapter(List<Ride> data,ListItemClickListener listener) {
             this.data = data;
+            this.listener = listener;
             dataFull = new ArrayList<>(this.data);
         }
 
@@ -355,8 +362,8 @@ public class FirstFragment extends android.app.Fragment {
             TextView location_txt;
             TextView distance_txt;
             ImageView btn;
-            ImageButton arrow;
-            ImageButton plus;
+            ImageView arrow;
+            ImageView plus;
             Context context;
 
 
@@ -391,11 +398,13 @@ public class FirstFragment extends android.app.Fragment {
                 }
                 //the button to get the ride
                 if (v == plus) {
-                    FirstFragment firstFragment = new FirstFragment();
-                    firstFragment.showDialog(getAdapterPosition());
+                    listener.onItemClicked((ExpendableItem) data.get(getAdapterPosition()));
                 }
             }
         }
+    }
+    interface ListItemClickListener{
+        void onItemClicked(FirstFragment.ExpendableItem item);
     }
 
     private class ChildItem extends Ride { }

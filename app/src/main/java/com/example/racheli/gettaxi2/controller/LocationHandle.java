@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
-
 import java.util.List;
 
 public class LocationHandle extends Activity{
@@ -128,6 +127,7 @@ public class LocationHandle extends Activity{
 
         public float calculateDistance(Location a, Location b) {
 
+        if (a == null) return Float.MAX_VALUE;
                 float distance = a.distanceTo(b);
                 if(distance > 1000)
                 {
