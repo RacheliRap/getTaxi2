@@ -14,6 +14,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -26,40 +27,34 @@ import java.util.List;
 import java.util.Locale;
 
 public class LocationHandle extends Activity{
-    double longitude = 0;
+    double longitude;
     double latitude;
-    Location locationA;
-    Location location;
+    private Location locationA;
+    private Location myLocation;
     View view;
+    Context context;
 
-        private float calculateDistance(Location a, Location b) {
+    public LocationHandle(Context context) {
+        this.context = context;
+    }
 
-                float distance = a.distanceTo(b);
-                if(distance > 1000)
-                {
-                        distance = distance/1000;
-                }
-                return distance;
+    public Location getLocationA() {
+        return locationA;
+    }
 
-        }
+    public Location getMyLocation() {
+        getLocation();
+        return myLocation;
+    }
 
-        private void getLocation() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
-                } else {
-
-                        // Android version is lesser than 6.0 or the permission is already granted.
-                }
-
-                LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                final LocationListener locationListener = new LocationListener() {
-                        public void onLocationChanged(Location location) {
-                                if(location != null) {
-                                        longitude = location.getLongitude();
-                                        latitude = location.getLatitude();
-                                }
-                        }
+    private void getLocation() {
+            final LocationListener locationListener = new LocationListener() {
+                    public void onLocationChanged(Location location) {
+                            if(location != null) {
+                                    longitude = location.getLongitude();
+                                    latitude = location.getLatitude();
+                            }
+                    }
 
                         @Override
                         public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -77,19 +72,36 @@ public class LocationHandle extends Activity{
                         }
                 };
 
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
-                location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if(location != null) {
-                        longitude = location.getLongitude();
-                        latitude = location.getLatitude();
+                LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+                if(lm != null) {
+                    try {
+                        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                        myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (myLocation != null) {
+                            longitude = myLocation.getLongitude();
+                            latitude = myLocation.getLatitude();
+                        }
+                    }
+                    catch (SecurityException se)
+                    {
+
+                    }
                 }
-
-
         }
+
+        @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+                if (requestCode == 5){
+                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                                getLocation();
+                        }
+                }
+        }
+
         public void addressToLocation(String my_address)
         {
                 try {
-                        Geocoder gc = new Geocoder(this);
+                        Geocoder gc = new Geocoder(context);
                         if (gc.isPresent()) {
                                 List<Address> list = gc.getFromLocationName(my_address, 1);
                                 Address address = list.get(0);
@@ -105,28 +117,16 @@ public class LocationHandle extends Activity{
                 }
         }
 
+        public float calculateDistance(Location a, Location b) {
 
-        public String getPlace(Location location) {
-                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-                List<Address> addresses = null;
-                try {
-                        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                        if (addresses.size() > 0) {
-                                String cityName = addresses.get(0).getAddressLine(0);
-                                String stateName = addresses.get(0).getAddressLine(1);
-                                String countryName = addresses.get(0).getAddressLine(2);
-                                return stateName + "\n" + cityName + "\n" + countryName;
-                        }
-                        return "no place: \n ("+location.getLongitude()+" , "+location.getLatitude()+")";
-                }
-                catch (IOException e)
+                float distance = a.distanceTo(b);
+                if(distance > 1000)
                 {
-                        e.printStackTrace();
+                        distance = distance/1000;
                 }
-                return "IOException ...";
+                return distance;
+
         }
-
-
 
 }
 

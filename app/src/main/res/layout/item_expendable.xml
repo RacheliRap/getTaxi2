@@ -25,23 +25,25 @@
 
             <TextView
                 android:id="@+id/parent_location"
-                android:layout_width="285dp"
+                android:layout_width="290dp"
                 android:layout_height="37dp"
                 android:drawablePadding="8dp"
                 android:gravity="start|center"
-                android:paddingLeft="16dp"
-                android:textColor="@color/white" />
+                android:paddingLeft="10dp"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/parent_dist"
-                android:layout_width="285dp"
+                android:layout_width="290dp"
                 android:layout_height="34dp"
                 android:drawablePadding="8dp"
                 android:gravity="start|center"
-                android:paddingLeft="16dp"
+                android:paddingLeft="10dp"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+               />
 
 
             <!--  <TextView

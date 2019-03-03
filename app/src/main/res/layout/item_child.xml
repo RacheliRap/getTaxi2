@@ -59,7 +59,7 @@
         android:layout_height="30dp"
         android:id="@+id/time_textView"
         android:textColor="@color/wine"
-        android:textSize="16sp"
+        android:textSize="8sp"
         android:gravity="center|start"
         android:paddingStart="16dp"
         />
@@ -68,7 +68,7 @@
         android:layout_height="30dp"
         android:id="@+id/dest_textView"
         android:textColor="@color/wine"
-        android:textSize="16sp"
+        android:textSize="10sp"
         android:gravity="center|start"
         android:paddingStart="16dp"
         />
