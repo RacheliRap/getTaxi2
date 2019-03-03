@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,6 +73,20 @@ public class Firebase_DBManager implements Backend {
 
     public List<Ride> getRides()
     {
+        rideRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Ride ride = snapshot.getValue(Ride.class);
+                    rideList.add(ride);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
        notifyToRideList(new NotifyDataChange<List<Ride>>() {
             @Override
             public void OnDataChanged(List<Ride> obj) {
@@ -164,6 +179,20 @@ public class Firebase_DBManager implements Backend {
 
     public List<Driver> getDrivers()
    {
+       driverRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(DataSnapshot dataSnapshot) {
+               for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                   Driver driver = snapshot.getValue(Driver.class);
+                   driverList.add(driver);
+               }
+           }
+
+           @Override
+           public void onCancelled(DatabaseError databaseError) {
+
+           }
+       });
        notifyToDriverList(new NotifyDataChange<List<Driver>>() {
            @Override
            public void OnDataChanged(List<Driver> obj) {
@@ -215,6 +244,9 @@ public class Firebase_DBManager implements Backend {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Driver driver = dataSnapshot.getValue(Driver.class);
+                    driverList.add(driver);
+                    notifyDataChange.OnDataChanged(driverList);
                 }
 
                 @Override
@@ -249,7 +281,9 @@ public class Firebase_DBManager implements Backend {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-                }
+                    Ride ride = dataSnapshot.getValue(Ride.class);
+                    rideList.add(ride);
+                    notifyDataChange.OnDataChanged(rideList);                }
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {

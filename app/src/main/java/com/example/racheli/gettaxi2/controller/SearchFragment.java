@@ -1,46 +1,33 @@
 package com.example.racheli.gettaxi2.controller;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.telephony.SmsManager;
-import android.util.Log;
-import android.widget.Filter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.content.Context;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
 
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.backend.Backend;
@@ -49,7 +36,6 @@ import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
 import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,7 +85,7 @@ public class SearchFragment extends android.app.Fragment {
             Log.i("Send SMS", "");
             Intent smsIntent = new Intent(Intent.ACTION_VIEW);
 
-            smsIntent.setData(Uri.parse("smsto:"));
+            smsIntent.setData(Uri.parse("smsto:0556680770"));
             smsIntent.setType("vnd.android-dir/mms-sms");
             smsIntent.putExtra("address"  , new String ("01234"));
             smsIntent.putExtra("sms_body"  , "Test ");
@@ -217,12 +203,20 @@ public class SearchFragment extends android.app.Fragment {
                             Uri uri = Uri.parse("smsto:+972586367706");
                             Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
                             intent.putExtra("sms_body", "hi");
-                            startActivity(intent);
+                            getActivity().startActivity(intent);
                         }
                     }
                     );
 
-                    new SendSmsTask().execute(1, 2, 3);
+                    Log.i("Send SMS", "");
+                    Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+
+                    smsIntent.setData(Uri.parse("smsto:0556680770"));
+//                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    smsIntent.putExtra("address"  , new String ("01234"));
+                    smsIntent.putExtra("sms_body"  , "Test ");
+//                    new SendSmsTask().execute(1, 2, 3);
+                    startActivity(smsIntent);
                     break;
                 }
             }
