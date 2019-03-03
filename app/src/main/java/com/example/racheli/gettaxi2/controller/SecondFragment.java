@@ -1,72 +1,57 @@
 package com.example.racheli.gettaxi2.controller;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.telephony.SmsManager;
-import android.util.Log;
-import android.widget.Filter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.content.Context;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
 
 import com.example.racheli.gettaxi2.R;
-import com.example.racheli.gettaxi2.model.backend.Backend;
-import com.example.racheli.gettaxi2.model.backend.BackendFactory;
-import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
-import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
 
-import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
-
-public class SearchFragment extends android.app.Fragment {
+public class SecondFragment extends Fragment {
     View view;
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
     RecyclerView recyclerView;
     static Context context;
     SearchView searchView;
     ExpendableAdapter adapter;
-    @NonNull
+    List<Ride> rideList = new ArrayList<>();
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @NonNull ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_search, container, false);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_search , container , false);
         return view;
     }
 
@@ -77,9 +62,8 @@ public class SearchFragment extends android.app.Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         adapter = new ExpendableAdapter(initDemoItems());
         recyclerView.setAdapter(adapter);
-        searchView = (SearchView) getView().findViewById(R.id.simpleSearchView);
-        activeSearchView();
-
+        //searchView = (SearchView) getView().findViewById(R.id.simpleSearchView);
+        //activeSearchView();
     }
     @Override
     public void onAttach(Activity activity) {
@@ -87,45 +71,9 @@ public class SearchFragment extends android.app.Fragment {
         super.onAttach(activity);
         context=getActivity();
     }
-    @Override
-    public void onDetach()
-    {
-        super.onDetach();
-        //context = null;
-    }
 
-    private class SendSmsTask extends AsyncTask<Integer, Integer, Boolean> {
-        protected Boolean doInBackground(Integer... urls) {
-            Log.i("Send SMS", "");
-            Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-
-            smsIntent.setData(Uri.parse("smsto:"));
-            smsIntent.setType("vnd.android-dir/mms-sms");
-            smsIntent.putExtra("address"  , new String ("01234"));
-            smsIntent.putExtra("sms_body"  , "Test ");
-
-            try {
-                startActivity(smsIntent);
-                //finish();
-                Log.i("Finished sending SMS...", "");
-            } catch (android.content.ActivityNotFoundException ex) {
-                Toast.makeText(context, "SMS failed, please try again later.", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }
-
-            protected void onProgressUpdate(Integer... progress) {
-            }
-            protected void onPostExecute(Long result) {
-        }
-        }
-
-        private List<Ride> initDemoItems() {
+    private List<Ride> initDemoItems() {
         List<Ride> result = new ArrayList<>(1000);
-        Backend fb = BackendFactory.getInstance();
-        Firebase_DBManager db = new Firebase_DBManager();
-        List<Ride> rideList = Firebase_DBManager.getRideList();
-        List<Driver> driverList = Firebase_DBManager.getDriverList();
         for(int i = 0; i < 3; i++)
         {
             Ride ride = new Ride();
@@ -133,32 +81,21 @@ public class SearchFragment extends android.app.Fragment {
             ride.setPhoneNumber("0507270820");
             ride.setOrigin(" Beit HaDfus Street 20, jerusalem");
             ride.setStartingTime("15:00");
+            ride.setRideDate(new SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().getTime()));
             rideList.add(ride);
         }
 
 
         for (int i = 0; i < 3; i++) {
-            ExpendableItem item = new SearchFragment.ExpendableItem();
+            ExpendableItem item = new ExpendableItem();
             item.setDestination(rideList.get(i).getDestination().toString());
             LocationHandle locationHandle = new LocationHandle(context);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
-                // has no permission it will crash if we will try to access it
-            }
-            locationHandle.getMyLocation();
-            Location driverLocation = locationHandle.getMyLocation();
-            locationHandle.addressToLocation(rideList.get(i).getOrigin().toString());
-            Location passengerLocation = locationHandle.getLocationA();
-            float distance = Math.round(locationHandle.calculateDistance(driverLocation, passengerLocation));
+            Location origin = locationHandle.addressToLocation(rideList.get(i).getOrigin().toString());
+            Location destination = locationHandle.addressToLocation(rideList.get(i).getDestination().toString());
+            float distance = Math.round(locationHandle.calculateDistance(origin, destination));
             item.setDistance(distance);
-            //getLocation();
-            //addressToLocation(rideList.get(i).getDestination().toString());
-            //float distance =  calculateDistance(locationA, location);
-            //item.setDistance(distance);
-            //item.time = rideList.get(i).getStartingTime();
             ChildItem child = new ChildItem();
-            child.setDestination(rideList.get(i).getOrigin().toString());
+            child.setOrigin(rideList.get(i).getOrigin().toString());
             child.setStartingTime(rideList.get(i).getStartingTime());
             child.setPhoneNumber(rideList.get(i).getPhoneNumber());
             item.childs.add(child);
@@ -166,16 +103,25 @@ public class SearchFragment extends android.app.Fragment {
         }
         return result;
     }
-   public void showDialog(int position)
+    public void showDialog(int position)
     {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "567")
+                .setSmallIcon(R.drawable.transparent_icon)
+                .setContentTitle("My notification")
+                .setContentText("Much longer text that cannot fit one line...")
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("Much longer text that cannot fit one line..."))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         //context = getActivity().getBaseContext();
         //Toast.makeText(context, "hi", Toast.LENGTH_LONG).show();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("GET RIDE");
-        String message = "Are you sure you want to continue with this ride?";
+        String destination = rideList.get(position).getDestination();
+        String message = "Are you sure you want to continue with the ride to " + destination + "?";
         alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setPositiveButton("Yes,I'm sure!",onClickListener);
         alertDialogBuilder.setNegativeButton("Cancel ",onClickListener);
+        alertDialogBuilder.setNeutralButton("Ride is done!", onClickListener);
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
@@ -189,11 +135,12 @@ public class SearchFragment extends android.app.Fragment {
                     break;
                 }
                 case Dialog.BUTTON_NEUTRAL: {
-
+                    //TODO change in ride status to done
                     Toast.makeText(context, "2", Toast.LENGTH_LONG).show();
                     break;
                 }
                 case Dialog.BUTTON_POSITIVE: {
+                    //TODO change in ride the driver name
                     /*Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + "+972586367706"));
                     intent.putExtra("sms_body", "hi");
                     startActivity(intent);*/
@@ -218,11 +165,10 @@ public class SearchFragment extends android.app.Fragment {
                             Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
                             intent.putExtra("sms_body", "hi");
                             startActivity(intent);
-                        }
-                    }
+                            }
+                            }
                     );
 
-                    new SendSmsTask().execute(1, 2, 3);
                     break;
                 }
             }
@@ -264,7 +210,7 @@ public class SearchFragment extends android.app.Fragment {
     }
 
 
-    private static class ExpendableAdapter extends RecyclerView.Adapter implements Filterable{
+    private static class ExpendableAdapter extends RecyclerView.Adapter implements Filterable {
         List<Ride> data;
         List<Ride> dataFull;
 
@@ -277,12 +223,12 @@ public class SearchFragment extends android.app.Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == SearchFragment.ExpendableAdapter.TYPES.EXPENDABLE.value) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_expendable, parent, false);
-                return new SearchFragment.ExpendableAdapter.ExpendableViewHolder(view);
+            if (viewType == ExpendableAdapter.TYPES.EXPENDABLE.value) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_expendable1, parent, false);
+                return new ExpendableAdapter.ExpendableViewHolder(view);
             } else {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_child, parent, false);
-                return new SearchFragment.ExpendableAdapter.ChildViewHolder(view);
+                return new ExpendableAdapter.ChildViewHolder(view);
             }
 
         }
@@ -291,13 +237,14 @@ public class SearchFragment extends android.app.Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Ride item = data.get(position);
-            if (item instanceof SearchFragment.ExpendableItem) {
-                SearchFragment.ExpendableAdapter.ExpendableViewHolder exHolder = (SearchFragment.ExpendableAdapter.ExpendableViewHolder) holder;
+            if (item instanceof ExpendableItem) {
+                ExpendableViewHolder exHolder = (ExpendableAdapter.ExpendableViewHolder) holder;
                 exHolder.location_txt.setText(item.getDestination());
                 exHolder.distance_txt.setText(Float.toString(((ExpendableItem)item).getDistance()));
+                exHolder.date_txt.setText(item.getRideDate());
                 // exHolder.distance_txt.setText((ExpendableItem) item.getDistance());
             } else {
-                SearchFragment.ExpendableAdapter.ChildViewHolder chHolder = (SearchFragment.ExpendableAdapter.ChildViewHolder) holder;
+                ExpendableAdapter.ChildViewHolder chHolder = (ExpendableAdapter.ChildViewHolder) holder;
                 chHolder.dest.setText(item.getDestination());
                 chHolder.phoneNumber.setText(item.getPhoneNumber());
                 chHolder.time.setText(item.getStartingTime());
@@ -356,7 +303,7 @@ public class SearchFragment extends android.app.Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            return data.get(position) instanceof SearchFragment.ExpendableItem ? SearchFragment.ExpendableAdapter.TYPES.EXPENDABLE.value : SearchFragment.ExpendableAdapter.TYPES.CHILD.value;
+            return data.get(position) instanceof ExpendableItem ? ExpendableAdapter.TYPES.EXPENDABLE.value : ExpendableAdapter.TYPES.CHILD.value;
         }
 
 
@@ -377,7 +324,7 @@ public class SearchFragment extends android.app.Fragment {
         class ExpendableViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView location_txt;
             TextView distance_txt;
-            ImageView btn;
+            TextView date_txt;
             ImageButton arrow;
             ImageButton plus;
             Context context;
@@ -387,6 +334,8 @@ public class SearchFragment extends android.app.Fragment {
                 super(itemView);
                 location_txt = itemView.findViewById(R.id.parent_location);
                 distance_txt = itemView.findViewById(R.id.parent_dist);
+                date_txt = itemView.findViewById(R.id.parent_date);
+
                 //btn = itemView.findViewById(R.id.expendable_btn);
                 // btn.setOnClickListener(this);
                 arrow = itemView.findViewById(R.id.expendable_btn);
@@ -400,7 +349,7 @@ public class SearchFragment extends android.app.Fragment {
             public void onClick(View v) {
                 //the button for expend the list view
                 if (v == arrow) {
-                    SearchFragment.ExpendableItem item = ((SearchFragment.ExpendableItem) data.get(getAdapterPosition()));
+                    ExpendableItem item = ((ExpendableItem) data.get(getAdapterPosition()));
                     int numOfChildes = item.childs.size();
                     if (item.isOpen) {
                         data.removeAll(item.childs);
@@ -414,8 +363,8 @@ public class SearchFragment extends android.app.Fragment {
                 }
                 //the button to get the ride
                 if (v == plus) {
-                    SearchFragment searchFragment = new SearchFragment();
-                    searchFragment.showDialog(getAdapterPosition());
+                    SecondFragment secondFragment = new SecondFragment();
+                    secondFragment.showDialog(getAdapterPosition());
                 }
             }
         }
@@ -426,7 +375,7 @@ public class SearchFragment extends android.app.Fragment {
     private class ExpendableItem extends Ride {
         public boolean isOpen;
         float distance;
-        List<SearchFragment.ChildItem> childs = new ArrayList<>();
+        List<SecondFragment.ChildItem> childs = new ArrayList<>();
 
         public void setDistance(Float distance) {
             this.distance = distance;
@@ -436,4 +385,5 @@ public class SearchFragment extends android.app.Fragment {
             return distance;
         }
     }
+
 }

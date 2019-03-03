@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             saveSharedPreferences();
             //call new intent with the navigation drawer
             Intent intent = new Intent(this , NavigationDrawerActivity.class);
-            //Intent intent = new Intent(this, NavigationDrawerActivity.class);
             startActivity(intent);
 
         }

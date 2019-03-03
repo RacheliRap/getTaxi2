@@ -1,50 +1,54 @@
 package com.example.racheli.gettaxi2.controller;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.content.Context;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 
-import com.google.android.gms.maps.model.LatLng;
-
-import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 public class LocationHandle extends Activity{
     double longitude;
     double latitude;
-    private Location locationA;
+    private Location destLocation;
+    private Location originLocation;
     private Location myLocation;
     View view;
     Context context;
+
+
 
     public LocationHandle(Context context) {
         this.context = context;
     }
 
-    public Location getLocationA() {
-        return locationA;
+    public Location getDestLocation() {
+        return destLocation;
     }
 
     public Location getMyLocation() {
         getLocation();
         return myLocation;
+    }
+    public Location getOriginLocation() {
+        return originLocation;
+    }
+
+    public void setOriginLocation(Location originLocation) {
+        this.originLocation = originLocation;
+    }
+
+    public void setDestLocation(Location destLocation) {
+        this.destLocation = destLocation;
     }
 
     private void getLocation() {
@@ -98,8 +102,9 @@ public class LocationHandle extends Activity{
                 }
         }
 
-        public void addressToLocation(String my_address)
+        public Location addressToLocation(String my_address)
         {
+            Location tempLocation = null;
                 try {
                         Geocoder gc = new Geocoder(context);
                         if (gc.isPresent()) {
@@ -107,14 +112,18 @@ public class LocationHandle extends Activity{
                                 Address address = list.get(0);
                                 double lat = address.getLatitude();
                                 double lng = address.getLongitude();
-                                locationA = new Location("A");
-                                locationA.setLatitude(lat);
-                                locationA.setLongitude(lng);
+                                tempLocation = new Location("A");
+                                tempLocation.setLatitude(lat);
+                                tempLocation.setLongitude(lng);
+
+
                         }
                 } catch (Exception e)
                 {
                         Toast.makeText(view.getContext(), "can not convert to location", Toast.LENGTH_LONG).show();
+
                 }
+            return tempLocation;
         }
 
         public float calculateDistance(Location a, Location b) {

@@ -18,6 +18,7 @@ public class Ride implements java.io.Serializable{
     private String passengerMail;
     private String phoneNumber;
     private String creditCard;
+    private String rideDate;
 
     public Ride(){}
 
@@ -58,7 +59,13 @@ public class Ride implements java.io.Serializable{
         this.phoneNumber = phoneNumber;
         this.creditCard = creditCard;
     }
+    public String getRideDate() {
+        return rideDate;
+    }
 
+    public void setRideDate(String rideDate) {
+        this.rideDate = rideDate;
+    }
     public String getDriverName() {
         return driverName;
     }
