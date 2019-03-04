@@ -1,10 +1,19 @@
 package com.example.racheli.gettaxi2.controller;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -13,6 +22,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
+import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
 import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,12 +33,10 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * main activity, the app login activity
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private FirebaseAuth mAuth;
-    List<Driver> list = new ArrayList<>();
-
 
     private EditText emailEditext;
     private EditText passwordEditext;
@@ -39,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * Find the Views in the layout
      */
-
     private void findViews() {
         emailEditext = (EditText) findViewById(R.id.email_editext);
         passwordEditext = (EditText) findViewById(R.id.password_edittext);
@@ -61,9 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadSharedPreferences();
         getRegisterData();
         initTextChangeListener();
-        //Firebase_DBManager db = new Firebase_DBManager();
-        //List<Ride> lst = db.getRideList();
-
+        Firebase_DBManager db = new Firebase_DBManager();
     }
 
     /**
@@ -90,24 +95,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == loginButton) {
-            //Backend fb  = BackendFactory.getInstance();
-            //list = fb.getDrivers();
-           // List<Ride> rides = fb.getRides();
-
-            //Firebase_DBManager.notifyToRidesList();
-           // list =  Firebase_DBManager.getDriverList();
-            //Firebase_DBManager d = new Firebase_DBManager();
-
-          ///  list = d.getDriverList();
-
-            //try to login using firebase function
-            //singIn(emailEditext.getText().toString(), passwordEditext.getText().toString());
             //save the email and the password into shared preference
             saveSharedPreferences();
             //call new intent with the navigation drawer
             Intent intent = new Intent(this , NavigationDrawerActivity.class);
             startActivity(intent);
-
         }
         if(v == registerButton)
         {
@@ -153,12 +145,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPreferences.contains("NAME")) {
             emailEditext.setText(sharedPreferences.getString("NAME", null));
-            Toast.makeText(this, "load name", Toast.LENGTH_SHORT).show();
         }
         if (sharedPreferences.contains("PASSWORD")) {
         //    String password = sharedPreferences.getInt("PASSWORD", 0);
             passwordEditext.setText(sharedPreferences.getString("PASSWORD", null));
-            Toast.makeText(this, "load password", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -175,40 +165,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.putString("NAME", name);
             editor.putString("PASSWORD", password);
             editor.commit();
-            Toast.makeText(this, "save name and password Preferences", Toast.LENGTH_SHORT).show();
         }
         catch (Exception ex)
         {
-            Toast.makeText(this, "failed to save Preferences", Toast.LENGTH_SHORT).show();
         }
     }
-    private void singIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            callIntent();
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(getBaseContext(), "incorrect email or password", Toast.LENGTH_SHORT).show();
-                            loginButton.setEnabled(true); //set the button to enable other login
-                        }
-                    }
-                });
-    }
-
-    private void callIntent() {
-        //save the email and the password into shared preference
-        saveSharedPreferences();
-        //call new intent with the navigation drawer
-        Intent intent = new Intent(this, NavigationDrawerActivity.class);
-        startActivity(intent);
-    }
-
 
 }
 

@@ -20,6 +20,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">Sign in</string>
     <string name="login_register_button">Register Here</string>
+    <string name="welcome_app">"Welcome Back!</string>
 
 
     <!-- Strings related to login -->

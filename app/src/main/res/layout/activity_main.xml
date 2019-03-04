@@ -8,7 +8,8 @@
     tools:context=".controller.MainActivity"
     >
     <include layout="@layout/toolbar"
-        android:id="@+id/toolbar"></include>
+        android:id="@+id/toolbar">
+    </include>
 <Space
     android:layout_width="wrap_content"
     android:layout_height="50dp"

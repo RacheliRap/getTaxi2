@@ -22,6 +22,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * register class, handle driver register to the system
+ */
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
@@ -65,14 +68,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v)
     {
+        //user register
         if(v == registerButton)
         {
             addDriver();
+            //send intent to mainActivity with the email and password;
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("email" ,emailEditext.getText().toString() );
             intent.putExtra("password" ,passwordEditext.getText().toString() );
             startActivity(intent);
-            //register(emailEditext.getText().toString() , passwordEditext.getText().toString());
         }
     }
 
@@ -125,6 +129,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         return driver;
     }
 
+    /**
+     * check if the focus is removed from one of the text view
+     * In order to check input currency
+     */
     public void initTextChangeListener() {
         //check if the focus has change in one of the edit text
         View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
@@ -198,34 +206,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             isAllValid = false;
         }
         registerButton.setEnabled(isAllValid);
-    }
-
-    private void register(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            //call the function to let the user in the app
-                            getIn();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(getBaseContext(), "Register Failed. Please try again.", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }); }
-
-    /**
-     * if the register passed ok, the function pass the user into the app - the next activity
-     */
-    private void getIn() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("email" ,emailEditext.getText().toString() );
-        intent.putExtra("password" ,passwordEditext.getText().toString() );
-        startActivity(intent);
-
     }
 
 

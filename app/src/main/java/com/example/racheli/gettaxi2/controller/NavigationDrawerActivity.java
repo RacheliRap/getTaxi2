@@ -1,9 +1,13 @@
 package com.example.racheli.gettaxi2.controller;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -18,16 +22,20 @@ import android.view.View;
 
 import com.example.racheli.gettaxi2.R;
 
+/**
+ * navigation drawer class, handle the navigation drawer and click options.
+ */
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //automatically code
         setContentView(R.layout.activity_navigation_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        toolbar.setTitle("My Cab");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,11 +50,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    /**
+     * The function handle open and close the drawer when back button is pressed
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -57,39 +67,91 @@ public class NavigationDrawerActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * The function create the option menu
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_navigation_drawer, menu);
+        showDialog();
         return true;
     }
 
+    /**
+     * The function show the dialog for turn on the location on the phone
+     */
+    public void showDialog()
+    {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("ACCESS PHONE LOCATION");
+        String message = "In order to use this app you must turn on device location";
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton("Turn on",onClickListener);
+        alertDialogBuilder.setNegativeButton("I prefer not use this app ",onClickListener);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+    }
+
+    /**
+     * listener for the dialog that show un function showDialog()
+     */
+    AlertDialog.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                //the user dosen't want to turn on location
+                case Dialog.BUTTON_NEGATIVE: {
+                    finishAffinity();
+                    System.exit(0);
+                    break;
+                }
+                //take the user to phone settings
+                case Dialog.BUTTON_POSITIVE: {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                    break;
+                }
+            }
+        }
+    };
+
+    /**
+     * Handle menu on tool bar
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
+    /**
+     * handle select options from the navigation drawer
+     */
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         FragmentManager fragmentManager = getFragmentManager();
-
+        //available rides
         if (id == R.id.nav_availabe_rides) {
             fragmentManager.beginTransaction().replace(R.id.content_frame, new FirstFragment())
                     .addToBackStack(null).commit();
-
+            //specific rides
         } else if (id == R.id.nav_specific_rides) {
             fragmentManager.beginTransaction().replace(R.id.content_frame , new SecondFragment())
             .addToBackStack(null).commit();
@@ -98,6 +160,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
             //fragmentManager.beginTransaction().replace(R.id.content_frame , new ExitFragment()).commit();
             Intent intent = new Intent(this , MainActivity.class);
             startActivity(intent);
+            //browse online for getTaxi website
         } else if (id == R.id.nav_browse_online) {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://gett.com/il/about/"));
             startActivity(browserIntent);

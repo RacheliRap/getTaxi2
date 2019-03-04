@@ -1,27 +1,35 @@
 package com.example.racheli.gettaxi2.controller;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,31 +42,49 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class SecondFragment extends Fragment {
+import static android.support.v4.content.ContextCompat.checkSelfPermission;
+
+/**
+ * The class handle the second fragment - specific rides
+ */
+public class SecondFragment extends android.app.Fragment {
     View view;
-    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
     RecyclerView recyclerView;
     static Context context;
     SearchView searchView;
     ExpendableAdapter adapter;
     List<Ride> rideList = new ArrayList<>();
-    @Nullable
+    Ride tmpRide;
+
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_search , container , false);
+    public View onCreateView(LayoutInflater inflater, @NonNull ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_search, container, false);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        findView();
+        activeSearchView();
+    }
+    /**
+     * Find the Views in the layout
+     */
+    private void findView() {
         recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        adapter = new ExpendableAdapter(initDemoItems());
+        adapter = new ExpendableAdapter(initDemoItems(), new ListItemClickListener() {
+            @Override
+            public void onItemClicked(ExpendableItem item, int position) {
+                showDialog(item , position);
+            }
+        });
         recyclerView.setAdapter(adapter);
-        //searchView = (SearchView) getView().findViewById(R.id.simpleSearchView);
-        //activeSearchView();
+        searchView = (SearchView) getView().findViewById(R.id.simpleSearchView);
     }
+
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
@@ -88,6 +114,7 @@ public class SecondFragment extends Fragment {
             Location destination = locationHandle.addressToLocation(rideList.get(i).getDestination().toString());
             float distance = Math.round(locationHandle.calculateDistance(origin, destination));
             item.setDistance(distance);
+            item.setRideDate(rideList.get(i).getRideDate());
             ChildItem child = new ChildItem();
             child.setOrigin(rideList.get(i).getOrigin().toString());
             child.setStartingTime(rideList.get(i).getStartingTime());
@@ -97,70 +124,50 @@ public class SecondFragment extends Fragment {
         }
         return result;
     }
-    public void showDialog(int position)
+    /**
+     * The function show the dialog after the driver chose to save the passanger as a contact
+     * @param item the chosen expandable item
+     * @param position the position of the recycle view
+     */
+    public void showDialog(ExpendableItem item, int position)
     {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "567")
-                .setSmallIcon(R.drawable.transparent_icon)
-                .setContentTitle("My notification")
-                .setContentText("Much longer text that cannot fit one line...")
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Much longer text that cannot fit one line..."))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        //context = getActivity().getBaseContext();
-        //Toast.makeText(context, "hi", Toast.LENGTH_LONG).show();
+
+        tmpRide = rideList.get(position);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("GET RIDE");
-        String destination = rideList.get(position).getDestination();
-        String message = "Are you sure you want to continue with the ride to " + destination + "?";
+        alertDialogBuilder.setTitle("ADD CONTACT");
+        String message = "Do you want to add the passenger to your contacts?";
         alertDialogBuilder.setMessage(message);
-        alertDialogBuilder.setPositiveButton("Yes,I'm sure!",onClickListener);
+        alertDialogBuilder.setPositiveButton("Yes",onClickListener);
         alertDialogBuilder.setNegativeButton("Cancel ",onClickListener);
-        alertDialogBuilder.setNeutralButton("Ride is done!", onClickListener);
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+
+
     }
+    //listener for the dialog that set on showDialog()
     AlertDialog.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case Dialog.BUTTON_NEGATIVE: {
-                    Toast.makeText(context, "1", Toast.LENGTH_LONG).show();
                     break;
                 }
-                case Dialog.BUTTON_NEUTRAL: {
-                    //TODO change in ride status to done
-                    Toast.makeText(context, "2", Toast.LENGTH_LONG).show();
-                    break;
-                }
+                //Thee driver wants to add the contract
                 case Dialog.BUTTON_POSITIVE: {
-                    //TODO change in ride the driver name
-                    /*Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + "+972586367706"));
-                    intent.putExtra("sms_body", "hi");
-                    startActivity(intent);*/
-                    /*SmsManager sms = SmsManager.getDefault();
-                    sms.sendTextMessage("+972586367706", null, "hi", null, null);
-                    Toast.makeText(context, "3", Toast.LENGTH_LONG).show();*/
-                    /*SmsManager sms = SmsManager.getDefault();
-                    PendingIntent sentPI;
-                    String SENT = "SMS_SENT";
-                    sentPI = PendingIntent.getBroadcast(context, 0,new Intent(SENT), 0);
-                    sms.sendTextMessage("+972596367706", null, "hi ", sentPI, null);*/
-                    //sendSMS();
 
-                    /*Uri uri = Uri.parse("smsto:+972586367706");
-                    Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-                    intent.putExtra("sms_body", "hi");
-                    startActivity(intent);*/
                     ((Activity)context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Uri uri = Uri.parse("smsto:+972586367706");
-                            Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-                            intent.putExtra("sms_body", "hi");
-                            startActivity(intent);
-                            }
-                            }
+                            Intent intent = new Intent(Intent.ACTION_INSERT);
+                            intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+                            intent.putExtra(ContactsContract.Intents.Insert.NAME, tmpRide.getPassengerName());
+                            intent.putExtra(ContactsContract.Intents.Insert.PHONE,tmpRide.getPhoneNumber());
+                            intent.putExtra(ContactsContract.Intents.Insert.EMAIL, tmpRide.getPassengerMail());
+                            context.startActivity(intent);
+
+                        }
+                    }
                     );
 
                     break;
@@ -169,24 +176,9 @@ public class SecondFragment extends Fragment {
         }
     };
 
-    protected void sendSMS() {
-        Log.i("Send SMS", "");
-        Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-
-        smsIntent.setData(Uri.parse("smsto:"));
-        smsIntent.setType("vnd.android-dir/mms-sms");
-        smsIntent.putExtra("address"  , new String ("01234"));
-        smsIntent.putExtra("sms_body"  , "Test ");
-
-        try {
-            startActivity(smsIntent);
-            //finish();
-            Log.i("Finished sending SMS...", "");
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(context, "SMS failed, please try again later.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
+    /**
+     * set listener for the search view
+     */
     public void activeSearchView()
     {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -195,6 +187,11 @@ public class SecondFragment extends Fragment {
                 return false;
             }
 
+            /**
+             * When the text change in the search view
+             * @param newText the text the user typed into the search view
+             * @return false
+             */
             @Override
             public boolean onQueryTextChange(String newText) {
                 adapter.getFilter().filter(newText);
@@ -203,22 +200,34 @@ public class SecondFragment extends Fragment {
         });
     }
 
-
-    private static class ExpendableAdapter extends RecyclerView.Adapter implements Filterable {
+    /**
+     * The class handle the adapter for the recycle view
+     */
+    private static class ExpendableAdapter extends RecyclerView.Adapter implements Filterable
+    {
         List<Ride> data;
         List<Ride> dataFull;
+        ListItemClickListener listener;
 
-
-        public ExpendableAdapter(List<Ride> data) {
+        /**
+         * ctor
+         * @param data the data to present on recycle view
+         * @param listener listener for the button click on the recycle view
+         */
+        public ExpendableAdapter(List<Ride> data,ListItemClickListener listener) {
             this.data = data;
+            this.listener = listener;
             dataFull = new ArrayList<>(this.data);
         }
 
+        /**
+         * create the expandable view holder or its child view holder
+         */
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == ExpendableAdapter.TYPES.EXPENDABLE.value) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_expendable1, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_expendable2, parent, false);
                 return new ExpendableAdapter.ExpendableViewHolder(view);
             } else {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_child, parent, false);
@@ -227,33 +236,50 @@ public class SecondFragment extends Fragment {
 
         }
 
-
+        /**
+         * bind the view holder
+         * @param holder recycle view to bind
+         * @param position position in the view where the view holder should be bind
+         */
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Ride item = data.get(position);
             if (item instanceof ExpendableItem) {
-                ExpendableViewHolder exHolder = (ExpendableAdapter.ExpendableViewHolder) holder;
+                //set view holder text for the recycle view
+                ExpendableAdapter.ExpendableViewHolder exHolder = (ExpendableAdapter.ExpendableViewHolder) holder;
                 exHolder.location_txt.setText(item.getDestination());
-                exHolder.distance_txt.setText(Float.toString(((ExpendableItem)item).getDistance()));
-                exHolder.date_txt.setText(item.getRideDate());
-                // exHolder.distance_txt.setText((ExpendableItem) item.getDistance());
+                exHolder.distance_txt.setText(Float.toString(((ExpendableItem)item).getDistance()) + " km");
+                exHolder.date_txt.setText("At " + item.getRideDate());
             } else {
+                //set child view holder text for the recycle view
                 ExpendableAdapter.ChildViewHolder chHolder = (ExpendableAdapter.ChildViewHolder) holder;
-                chHolder.dest.setText(item.getDestination());
+                chHolder.origin.setText(item.getOrigin());
                 chHolder.phoneNumber.setText(item.getPhoneNumber());
                 chHolder.time.setText(item.getStartingTime());
             }
         }
 
+        /**
+         * return the size of the recycle view
+         * @return size
+         */
         @Override
         public int getItemCount() {
             return data.size();
         }
 
+        /**
+         * implement the data filter for the recycle view
+         */
         @Override
         public Filter getFilter() {
             return dataFilter;
         }
+        /**
+         * Filter the data by the constraint
+         * @param constraint the char the user typed in the search view
+         * @return list with filter results
+         */
         private Filter dataFilter = new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
@@ -263,7 +289,7 @@ public class SecondFragment extends Fragment {
                 {
                     filteredList.addAll(dataFull);// suppose to be dataFull - check if error accurs
                 }
-                else {
+                else { //filter the list
                     String filterPattern = constraint.toString().toLowerCase().trim(); //make sure the search is not case sensitivity
                     for (Ride r : dataFull) {
                         if (r.getDestination().toLowerCase().contains(filterPattern)) {
@@ -277,6 +303,11 @@ public class SecondFragment extends Fragment {
                 return results;
             }
 
+            /**
+             * publish the filtered results
+             * @param constraint the char the user typed in the search view
+             * @param results the results from performFiltering()
+             */
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 data.clear();
@@ -285,6 +316,7 @@ public class SecondFragment extends Fragment {
             }
         };
 
+        //enum with types for the recycle view(Expandable(parent), child)
         enum TYPES {
             EXPENDABLE(1), CHILD(2);
 
@@ -295,48 +327,59 @@ public class SecondFragment extends Fragment {
             }
         }
 
+
+        /**
+         * retrurn if the item is expandable or child
+         * @param position
+         * @return enum TYPES value
+         */
         @Override
         public int getItemViewType(int position) {
             return data.get(position) instanceof ExpendableItem ? ExpendableAdapter.TYPES.EXPENDABLE.value : ExpendableAdapter.TYPES.CHILD.value;
         }
 
-
+        /**
+         * The class handle the child view holder
+         */
         class ChildViewHolder extends RecyclerView.ViewHolder {
-            TextView dest;
+            TextView origin;
             TextView time;
             TextView phoneNumber;
 
+            /**
+             * ctor
+             * @param itemView the layout with the child view
+             */
             public ChildViewHolder(View itemView) {
                 super(itemView);
-                dest = itemView.findViewById(R.id.dest_textView);
+                origin = itemView.findViewById(R.id.dest_textView);
                 time = itemView.findViewById(R.id.time_textView);
                 phoneNumber = itemView.findViewById(R.id.phoneNumber_textView);
             }
         }
 
-
+        /**
+         * The class handle the Expandable item(the parent)
+         */
         class ExpendableViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView location_txt;
             TextView distance_txt;
             TextView date_txt;
-            ImageButton arrow;
-            ImageButton plus;
-            Context context;
-
-
+            ImageView arrow;
+            ImageView addContact;
+            /**
+             * ctor
+             * @param itemView the layout with the parent view
+             */
             public ExpendableViewHolder(View itemView) {
                 super(itemView);
                 location_txt = itemView.findViewById(R.id.parent_location);
                 distance_txt = itemView.findViewById(R.id.parent_dist);
                 date_txt = itemView.findViewById(R.id.parent_date);
-
-                //btn = itemView.findViewById(R.id.expendable_btn);
-                // btn.setOnClickListener(this);
                 arrow = itemView.findViewById(R.id.expendable_btn);
                 arrow.setOnClickListener(this);
-                plus = itemView.findViewById(R.id.getRide_btn);
-                plus.setOnClickListener(this);
-
+                addContact = itemView.findViewById(R.id.addContact_btn);
+                addContact.setOnClickListener(this);
             }
 
             @Override
@@ -355,21 +398,31 @@ public class SecondFragment extends Fragment {
                         item.isOpen = true;
                     }
                 }
-                //the button to get the ride
-                if (v == plus) {
-                    SecondFragment secondFragment = new SecondFragment();
-                    secondFragment.showDialog(getAdapterPosition());
+                //the button to get the contact
+                if (v == addContact) {
+                    listener.onItemClicked((ExpendableItem) data.get(getAdapterPosition()), getAdapterPosition());
                 }
             }
         }
     }
-
+    /**
+     * Interface to handle the button click on the recycle view
+     */
+    interface ListItemClickListener{
+        void onItemClicked(ExpendableItem item, int position);
+    }
+    /**
+     * child item class, extends ride for use in the recycle view
+     */
     private class ChildItem extends Ride { }
 
+    /**
+     * Expandable item class, extends ride for use in the recycle view
+     */
     private class ExpendableItem extends Ride {
-        public boolean isOpen;
+        public boolean isOpen;//Is the item expand or not
         float distance;
-        List<SecondFragment.ChildItem> childs = new ArrayList<>();
+        List<ChildItem> childs = new ArrayList<>();
 
         public void setDistance(Float distance) {
             this.distance = distance;
@@ -379,5 +432,4 @@ public class SecondFragment extends Fragment {
             return distance;
         }
     }
-
 }
