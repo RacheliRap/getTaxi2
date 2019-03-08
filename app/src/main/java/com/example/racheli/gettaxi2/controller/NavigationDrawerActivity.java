@@ -22,6 +22,8 @@ import android.view.View;
 
 import com.example.racheli.gettaxi2.R;
 
+import java.util.zip.Inflater;
+
 /**
  * navigation drawer class, handle the navigation drawer and click options.
  */
@@ -36,6 +38,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("My Cab");
+        getSupportActionBar().setTitle("My Cab");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +55,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     /**
@@ -76,7 +80,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_navigation_drawer, menu);
-        showDialog();
+        LocationClass lc = new LocationClass(getApplication());
+        //if device location is off
+        if(!lc.canGetLocation())
+        {
+            showDialog();
+        }
         return true;
     }
 
@@ -133,6 +142,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -165,8 +175,22 @@ public class NavigationDrawerActivity extends AppCompatActivity
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://gett.com/il/about/"));
             startActivity(browserIntent);
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_contact_us) {
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            String [] address = {"support@myCab.com"} ;
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, address);
+            startActivity(Intent.createChooser(emailIntent, ""));
+        }
+        else if( id == R.id.nav_share)
+        {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            sharingIntent.setType("message/rfc822");
+            String body = "I would like the share with you the new amazing app - myCab." +
+                    "\nFor more details contact Support@myCab.com";
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"subject");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

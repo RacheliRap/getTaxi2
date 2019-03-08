@@ -10,14 +10,14 @@ public class Driver implements java.io.Serializable{
     private String cCardNumber;
     private String password;
 
-    public Driver(String fullName, String id, String phoneNumber, String email, String cCardNumber, String password) {
+   /* public Driver(String fullName, String id, String phoneNumber, String email, String cCardNumber, String password) {
         this.fullName = fullName;
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.cCardNumber = cCardNumber;
         this.password = password;
-    }
+    }*/
 
     public String getFullName() {
         return fullName;

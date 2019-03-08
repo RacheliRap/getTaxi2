@@ -6,29 +6,29 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_availabe_rides"
-            android:title="Available Rides" />
+            android:title="@string/available_rides" />
         <item
             android:id="@+id/nav_specific_rides"
-            android:title="Specific Rides" />
+            android:title="@string/my_rides" />
         <item
             android:id="@+id/nav_browse_online"
-            android:title="Visit Us Online" />
+            android:title="@string/visit_online" />
         <item
             android:id="@+id/nav_exit"
-            android:title="Exit" />
+            android:title="@string/exit" />
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="@string/share" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_contact_us"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="@string/contact_us" />
         </menu>
     </item>
 

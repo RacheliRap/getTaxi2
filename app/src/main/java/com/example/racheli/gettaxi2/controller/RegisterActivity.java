@@ -85,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Driver driver = getDriver();
         try{
             //String jsonObj = quickParse(ride);
-            Backend instance = BackendFactory.getInstance();
+            Backend instance = BackendFactory.getInstance(getApplicationContext());
             instance.addDriver(driver, new Action<String>() {
                 @Override
                 public void onSuccess(String obj) {

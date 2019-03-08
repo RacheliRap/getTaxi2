@@ -34,10 +34,6 @@
             android:name=".controller.NavigationDrawerActivity"
             android:label="@string/title_activity_navigation_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".controller.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
-        <activity android:name=".controller.AvailableRidesFragment" />
     </application>
 
 </manifest>

@@ -1,29 +1,18 @@
 package com.example.racheli.gettaxi2.controller;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +21,6 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.entities.Ride;
@@ -41,8 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 /**
  * The class handle the second fragment - specific rides
@@ -87,7 +73,6 @@ public class SecondFragment extends android.app.Fragment {
 
     @Override
     public void onAttach(Activity activity) {
-        // TODO Auto-generated method stub
         super.onAttach(activity);
         context=getActivity();
     }
@@ -109,10 +94,10 @@ public class SecondFragment extends android.app.Fragment {
         for (int i = 0; i < 3; i++) {
             ExpendableItem item = new ExpendableItem();
             item.setDestination(rideList.get(i).getDestination().toString());
-            LocationHandle locationHandle = new LocationHandle(context);
-            Location origin = locationHandle.addressToLocation(rideList.get(i).getOrigin().toString());
-            Location destination = locationHandle.addressToLocation(rideList.get(i).getDestination().toString());
-            float distance = Math.round(locationHandle.calculateDistance(origin, destination));
+            LocationClass locationClass = new LocationClass(context);
+            Location origin = locationClass.addressToLocation(rideList.get(i).getOrigin().toString());
+            Location destination = locationClass.addressToLocation(rideList.get(i).getDestination().toString());
+            float distance = Math.round(locationClass.calculateDistance(origin, destination));
             item.setDistance(distance);
             item.setRideDate(rideList.get(i).getRideDate());
             ChildItem child = new ChildItem();
@@ -292,7 +277,9 @@ public class SecondFragment extends android.app.Fragment {
                 else { //filter the list
                     String filterPattern = constraint.toString().toLowerCase().trim(); //make sure the search is not case sensitivity
                     for (Ride r : dataFull) {
-                        if (r.getDestination().toLowerCase().contains(filterPattern)) {
+                        if (r.getDestination().toLowerCase().contains(filterPattern)
+                                || Float.toString(r.getDistance()).contains(filterPattern)
+                                || r.getRideDate().contains(filterPattern)) {
                             filteredList.add(r);
                         }
 
@@ -421,15 +408,15 @@ public class SecondFragment extends android.app.Fragment {
      */
     private class ExpendableItem extends Ride {
         public boolean isOpen;//Is the item expand or not
-        float distance;
+        //float distance;
         List<ChildItem> childs = new ArrayList<>();
 
-        public void setDistance(Float distance) {
+        /*public void setDistance(Float distance) {
             this.distance = distance;
         }
 
         public float getDistance() {
             return distance;
-        }
+        }*/
     }
 }

@@ -13,16 +13,5 @@
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/welcome_app"
-                android:paddingTop="5dp"
-                android:textSize="50sp"
-                android:textColor="@color/wine"
-                android:textStyle="bold"
-                android:fontFamily="@font/aladin"
-                android:layout_gravity="center"
-                android:gravity="center"/>
         </FrameLayout>
 </android.support.constraint.ConstraintLayout>

@@ -7,7 +7,7 @@ public class Ride implements java.io.Serializable{
     }
 
     private static final long serialVersionUID = 1L;
-    //private Long ID;
+    private String ID;
     private String driverName;
     private String status ;
     private String origin;
@@ -19,46 +19,26 @@ public class Ride implements java.io.Serializable{
     private String phoneNumber;
     private String creditCard;
     private String rideDate;
+    private float distance;
 
     public Ride(){}
 
-    public Ride(String origin, String destination, String startingTime, String endingTime,
-                String passengerName, String passengerMail, String phoneNumber, String creditCard) {
-        this.origin = origin;
-        this.destination = destination;
-        this.startingTime = startingTime;
-        this.endingTime = endingTime;
-        this.passengerName = passengerName;
-        this.passengerMail = passengerMail;
-        this.phoneNumber = phoneNumber;
-        this.creditCard = creditCard;
+    public float getDistance() {
+        return distance;
     }
 
-    public Ride(String origin, String destination, String startingTime,
-                String passengerName, String passengerMail, String phoneNumber, String creditCard) {
-
-        this.origin = origin;
-        this.destination = destination;
-        this.startingTime = startingTime;
-        this.passengerName = passengerName;
-        this.passengerMail = passengerMail;
-        this.phoneNumber = phoneNumber;
-        this.creditCard = creditCard;
+    public void setDistance(float distance) {
+        this.distance = distance;
     }
 
-    public Ride(String driverName, String status, String origin, String destination, String startingTime,
-                String endingTime, String passengerName, String passengerMail, String phoneNumber, String creditCard) {
-        this.driverName = driverName;
-        this.status = status;
-        this.origin = origin;
-        this.destination = destination;
-        this.startingTime = startingTime;
-        this.endingTime = endingTime;
-        this.passengerName = passengerName;
-        this.passengerMail = passengerMail;
-        this.phoneNumber = phoneNumber;
-        this.creditCard = creditCard;
+    public String getID() {
+        return ID;
     }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
     public String getRideDate() {
         return rideDate;
     }

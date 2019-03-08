@@ -22,7 +22,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
+import com.example.racheli.gettaxi2.model.backend.Backend;
+import com.example.racheli.gettaxi2.model.backend.BackendFactory;
 import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
+import com.example.racheli.gettaxi2.model.datasource.MyCallback;
 import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -68,7 +71,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadSharedPreferences();
         getRegisterData();
         initTextChangeListener();
-        Firebase_DBManager db = new Firebase_DBManager();
+        Backend instance = BackendFactory.getInstance(getApplicationContext());
+        Firebase_DBManager db = new Firebase_DBManager(getApplicationContext());
+        db.callGetDrivers();
+       // List<Driver> ls = db.tmp;
+
     }
 
     /**

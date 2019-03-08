@@ -1,6 +1,7 @@
 package com.example.racheli.gettaxi2.model.backend;
 
 import com.example.racheli.gettaxi2.model.datasource.Action;
+import com.example.racheli.gettaxi2.model.datasource.MyCallback;
 import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public interface Backend {
 
     void addDriver(final Driver driver , final Action<String> action) throws Exception;
-    List<Driver> getDrivers();
+    void getDrivers(MyCallback myCallback);
     List<Ride> getRides();
     ArrayList<Ride> getAvailableRides();
     ArrayList<String> getDriversNames();

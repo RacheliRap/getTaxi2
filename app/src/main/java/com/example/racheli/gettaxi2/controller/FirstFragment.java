@@ -16,17 +16,13 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +34,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
+import com.example.racheli.gettaxi2.model.backend.Backend;
+import com.example.racheli.gettaxi2.model.backend.BackendFactory;
+import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
+import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
 
 import java.util.ArrayList;
@@ -55,7 +55,11 @@ public class FirstFragment extends android.app.Fragment {
     SearchView searchView;
     ExpendableAdapter adapter;
     List<Ride> rideList = new ArrayList<>();
+    List<Driver> ls = new ArrayList<>();
+
     Ride tmpRide;
+
+
 
     @NonNull
     @Override
@@ -107,16 +111,16 @@ public class FirstFragment extends android.app.Fragment {
 
         for (int i = 0; i < 3; i++) {
             ExpendableItem item = new FirstFragment.ExpendableItem();
-            LocationHandle locationHandle = new LocationHandle(context);
+            LocationClass locationClass = new LocationClass(context);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
                 // has no permission it will crash if we will try to access it
             }
             item.setDestination(rideList.get(i).getDestination());
-            Location driverLocation = locationHandle.getMyLocation();
-            Location passengerLocation = locationHandle.addressToLocation(rideList.get(i).getOrigin());
-            float distance = Math.round(locationHandle.calculateDistance(driverLocation, passengerLocation));
+            Location driverLocation = locationClass.getMyLocation();
+            Location passengerLocation = locationClass.addressToLocation(rideList.get(i).getOrigin());
+            float distance = Math.round(locationClass.calculateDistance(driverLocation, passengerLocation));
             item.setDistance(distance);
             ChildItem child = new ChildItem();
             child.setOrigin(rideList.get(i).getOrigin());
@@ -192,7 +196,7 @@ public class FirstFragment extends android.app.Fragment {
     private void showNotification() {
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context,LoginActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                new Intent(context,MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         String NOTIFICATION_CHANNEL_ID = "my_channel_id_01";
@@ -216,8 +220,8 @@ public class FirstFragment extends android.app.Fragment {
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.transparent_icon)
                 .setContentTitle("New Ride")
-                .setContentText("You just added a new ride to" + tmpRide.getDestination())
-
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("You just added a new ride to" + tmpRide.getDestination())) //expand
                 .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
                 .setContentIntent(contentIntent)
                 .setContentInfo("Info");
@@ -343,7 +347,8 @@ public class FirstFragment extends android.app.Fragment {
                     //filter the list
                     String filterPattern = constraint.toString().toLowerCase().trim(); //make sure the search is not case sensitivity
                     for (Ride r : dataFull) {
-                        if (r.getDestination().toLowerCase().contains(filterPattern)) {
+                        if (r.getDestination().toLowerCase().contains(filterPattern)
+                                || Float.toString(r.getDistance()).contains(filterPattern)) {
                             filteredList.add(r);
                         }
 
@@ -472,15 +477,15 @@ public class FirstFragment extends android.app.Fragment {
      */
     private class ExpendableItem extends Ride {
         public boolean isOpen;//if the item is expand or not
-        float distance;
+        //float distance;
         List<ChildItem> childs = new ArrayList<>();
 
-        public void setDistance(Float distance) {
+        /*public void setDistance(Float distance) {
             this.distance = distance;
         }
 
         public float getDistance() {
             return distance;
-        }
+        }*/
     }
 }
