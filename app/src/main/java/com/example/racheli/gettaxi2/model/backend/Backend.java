@@ -23,6 +23,7 @@ public interface Backend {
     ArrayList<Ride> getRidesByDistance(float distance);
     ArrayList<Ride> getRidesByDate(Date date);
     ArrayList<Ride> getRidesByPayment(float payment);
+    void updateRide(String id, String key, String value);
 
 
 

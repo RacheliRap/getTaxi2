@@ -245,6 +245,16 @@ public class Firebase_DBManager implements Backend {
         return ridesByPayment;
     }
 
+    @Override
+    public void updateRide(String id, String key, String value) {
+        try {
+            rideRef.child(id).child(key).setValue(value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void tmp(List<Driver> a)
     {
         tmp.addAll(a);
@@ -406,6 +416,24 @@ public class Firebase_DBManager implements Backend {
             };
             rideRef.addChildEventListener(rideRefChildEventListener);
         }
+    }
+
+    public void addRide(final Ride ride, final Action<String> action) throws Exception
+    {
+        rideRef.push().setValue(ride).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                action.onSuccess(" insert ride");
+                action.onProgress("upload ride data", 100);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                action.onFailure(e);
+                action.onProgress("error upload ride data", 100);
+
+            }
+        });
     }
 
 }

@@ -2,13 +2,13 @@ package com.example.racheli.gettaxi2.model.entities;
 
 //Ride class.
 public class Ride implements java.io.Serializable{
-    enum  Status{
+    public enum  Status{
         AVAILABLE, ON, DONE
     }
 
     private static final long serialVersionUID = 1L;
     private String ID;
-    private String driverName;
+    private String driverName = "";
     private String status ;
     private String origin;
     private String destination;
@@ -18,7 +18,7 @@ public class Ride implements java.io.Serializable{
     private String passengerMail;
     private String phoneNumber;
     private String creditCard;
-    private String rideDate;
+    private String rideDate = "";
     private float distance;
 
     public Ride(){}

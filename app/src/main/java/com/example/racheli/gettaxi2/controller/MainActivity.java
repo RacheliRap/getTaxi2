@@ -24,9 +24,11 @@ import android.widget.Toast;
 import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.backend.Backend;
 import com.example.racheli.gettaxi2.model.backend.BackendFactory;
+import com.example.racheli.gettaxi2.model.datasource.Action;
 import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
 import com.example.racheli.gettaxi2.model.datasource.MyCallback;
 import com.example.racheli.gettaxi2.model.entities.Driver;
+import com.example.racheli.gettaxi2.model.entities.Ride;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -74,9 +76,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Backend instance = BackendFactory.getInstance(getApplicationContext());
         Firebase_DBManager db = new Firebase_DBManager(getApplicationContext());
         db.callGetDrivers();
+       addRides();
        // List<Driver> ls = db.tmp;
 
     }
+
+    private void addRides() {
+
+
+        try {
+            //String jsonObj = quickParse(ride);
+            Backend instance = BackendFactory.getInstance(getApplicationContext());
+            for (int i = 0; i < 3; i++) {
+                Ride ride = new Ride();
+                ride.setDestination("The Hebrew University Secondary School, Jerusalem");
+                ride.setPhoneNumber("050732320");
+                ride.setOrigin("Jaffa Street 15,jerusalem");
+                ride.setStartingTime("12:10");
+                ride.setPassengerName("Avi Luecter");
+                ride.setPassengerMail("Dina@gmail.com");
+                ride.setCreditCard("1234123445341234");
+                ride.setStatus(Ride.Status.AVAILABLE);
+
+                ((Firebase_DBManager) instance).addRide(ride, new Action<String>() {
+                    @Override
+                    public void onSuccess(String obj) {
+                        Toast.makeText(getBaseContext(), "Succeeded" + obj, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        Toast.makeText(getBaseContext(), "Error \n" + exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onProgress(String status, double percent) {
+
+                    }
+                });
+            }
+        }
+                catch(Exception e){
+                Toast.makeText(getBaseContext(), "Error ", Toast.LENGTH_LONG).show();
+
+            }
+        }
+
+
 
     /**
      * If the user just signed up, the function get the data from the RegisterActivity activity
@@ -177,6 +223,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
         }
     }
+
+
 
 }
 

@@ -40,7 +40,10 @@ import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
 import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
@@ -56,6 +59,7 @@ public class FirstFragment extends android.app.Fragment {
     ExpendableAdapter adapter;
     List<Ride> rideList = new ArrayList<>();
     List<Driver> ls = new ArrayList<>();
+    Backend instance;
 
     Ride tmpRide;
 
@@ -88,6 +92,7 @@ public class FirstFragment extends android.app.Fragment {
         });
         recyclerView.setAdapter(adapter);
         searchView = (SearchView) getView().findViewById(R.id.simpleSearchView);
+        instance = BackendFactory.getInstance(context);
     }
 
     @Override
@@ -162,14 +167,17 @@ public class FirstFragment extends android.app.Fragment {
                     Toast.makeText(context, "1", Toast.LENGTH_LONG).show();
                     break;
                 }
+                //update the ride status and the ride date
                 case Dialog.BUTTON_NEUTRAL: {
-                    //TODO change in ride status to done
-                    Toast.makeText(context, "2", Toast.LENGTH_LONG).show();
+                    instance.updateRide(tmpRide.getID(), "status", "DONE");
+                    instance.updateRide(tmpRide.getID(), "rideDate", new SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().getTime()).toString());
+
                     break;
                 }
                 //the driver picked the ride
                 case Dialog.BUTTON_POSITIVE: {
                     //TODO change in ride the driver name
+                    instance.updateRide(tmpRide.getID(), "driverName", "change me later");
                     showNotification();
                     ((Activity)context).runOnUiThread(new Runnable() {
                         @Override
