@@ -72,6 +72,20 @@ public class Firebase_DBManager implements Backend {
             }
         });
 
+        NotifyToRideList(new NotifyDataChange<List<Ride>>() {
+            @Override
+            public void OnDataChanged(List<Ride> obj) {
+                Log.d(TAG, "OnDataChanged() called with: obj = [" + obj.size() + "]");
+
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                Log.d(TAG, "onFailure() called with: exception = [" + exception + "]");
+
+            }
+        });
+
 
     }
 
@@ -94,7 +108,7 @@ public class Firebase_DBManager implements Backend {
     }
 
     public List<Ride> getRides() {
-        rideRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+        /*rideRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -107,7 +121,7 @@ public class Firebase_DBManager implements Backend {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
         return rideList;
     }
 
@@ -261,7 +275,7 @@ public class Firebase_DBManager implements Backend {
     }
     public void getDrivers(final MyCallback myCallback) {
 
-        driverRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+        /*driverRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -281,7 +295,7 @@ public class Firebase_DBManager implements Backend {
         });
 
 
-        // return driverList;
+        // return driverList;*/
     }
 
     public void callGetDrivers()

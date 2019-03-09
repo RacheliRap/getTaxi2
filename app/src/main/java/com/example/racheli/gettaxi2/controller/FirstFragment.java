@@ -58,10 +58,10 @@ public class FirstFragment extends android.app.Fragment {
     SearchView searchView;
     ExpendableAdapter adapter;
     List<Ride> rideList = new ArrayList<>();
-    List<Driver> ls = new ArrayList<>();
+    List<Driver> driverList = new ArrayList<>();
     Backend instance;
-
     Ride tmpRide;
+    List<Ride> ridels = new ArrayList<>();
 
 
 
@@ -93,6 +93,8 @@ public class FirstFragment extends android.app.Fragment {
         recyclerView.setAdapter(adapter);
         searchView = (SearchView) getView().findViewById(R.id.simpleSearchView);
         instance = BackendFactory.getInstance(context);
+        driverList = ((Firebase_DBManager)instance).getDriverList();
+        rideList = ((Firebase_DBManager)instance).getRideList();
     }
 
     @Override
@@ -103,7 +105,7 @@ public class FirstFragment extends android.app.Fragment {
 
     private List<Ride> initDemoItems() {
         List<Ride> result = new ArrayList<>(1000);
-        for(int i = 0; i < 3; i++)
+        /*for(int i = 0; i < 3; i++)
         {
             Ride ride = new Ride();
             ride.setDestination( " Sderot Golda Me'ir 45, Jerusalem");
@@ -111,10 +113,10 @@ public class FirstFragment extends android.app.Fragment {
             ride.setOrigin(" Beit HaDfus Street 20, jerusalem");
             ride.setStartingTime("15:00");
             rideList.add(ride);
-        }
+        }*/
 
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < rideList.size(); i++) {
             ExpendableItem item = new FirstFragment.ExpendableItem();
             LocationClass locationClass = new LocationClass(context);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)

@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getRegisterData();
         initTextChangeListener();
         Backend instance = BackendFactory.getInstance(getApplicationContext());
-        Firebase_DBManager db = new Firebase_DBManager(getApplicationContext());
-        db.callGetDrivers();
+        //Firebase_DBManager db = new Firebase_DBManager(getApplicationContext());
+        ((Firebase_DBManager)instance).callGetDrivers();
        addRides();
        // List<Driver> ls = db.tmp;
 
