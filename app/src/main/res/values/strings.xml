@@ -36,7 +36,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="New_ride_received">New ride received</string>
-    <string name="notification_text_new_drive">Added a new ride</string>
+    <string name="New_ride_received">New rides received</string>
+    <string name="notification_text_new_ride">You have new relevant rides</string>
     <string name="big_text">Start the ride</string>
 </resources>

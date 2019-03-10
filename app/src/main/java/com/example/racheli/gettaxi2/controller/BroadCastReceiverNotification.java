@@ -59,8 +59,8 @@ public class BroadCastReceiverNotification extends BroadcastReceiver {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.transparent_icon)
-                .setContentTitle("new drives request")
-                .setContentText("you have a new relevant drives")
+                .setContentTitle(context.getString(R.string.New_ride_received))
+                .setContentText(context.getString(R.string.notification_text_new_ride))
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .setContentIntent(contentIntent)
                 .setContentInfo("Info");
