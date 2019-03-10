@@ -19,9 +19,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
+import com.example.racheli.gettaxi2.model.entities.Driver;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.zip.Inflater;
 
 /**
@@ -29,6 +34,7 @@ import java.util.zip.Inflater;
  */
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    Driver mDriver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +45,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         toolbar.setTitle("My Cab");
         getSupportActionBar().setTitle("My Cab");
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -55,6 +52,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        if(this.getIntent().getExtras() != null)
+        {
+            //check if the data we are looking for was sent(email and password)
+            if(this.getIntent().getExtras().containsKey("mDriver"))
+            {
+                mDriver = (Driver)(getIntent().getSerializableExtra("mDriver"));
+            }
+        }
 
     }
 
@@ -84,15 +89,32 @@ public class NavigationDrawerActivity extends AppCompatActivity
         //if device location is off
         if(!lc.canGetLocation())
         {
+            showDialogForLocation();
+        }
+        //show welcome message dialog
+        else
+        {
             showDialog();
         }
         return true;
     }
 
+    private void showDialog() {
+       // Toast.makeText(getApplicationContext(), new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).format(Calendar.getInstance().getTime()), Toast.LENGTH_LONG).show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("WELCOME " + mDriver.getFullName().toUpperCase());
+        String message = "Welcome to our app:) \nFor more details press the menu button";
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setNeutralButton("Got it!",onClickListener);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+    }
+
     /**
      * The function show the dialog for turn on the location on the phone
      */
-    public void showDialog()
+    public void showDialogForLocation()
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("ACCESS PHONE LOCATION");
@@ -123,6 +145,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 case Dialog.BUTTON_POSITIVE: {
                     Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(intent);
+                    break;
+                }
+                case  Dialog.BUTTON_NEUTRAL:
+                {
                     break;
                 }
             }
@@ -159,12 +185,23 @@ public class NavigationDrawerActivity extends AppCompatActivity
         FragmentManager fragmentManager = getFragmentManager();
         //available rides
         if (id == R.id.nav_availabe_rides) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new FirstFragment())
-                    .addToBackStack(null).commit();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("myDriver", mDriver );
+            FirstFragment frag = new FirstFragment();
+            frag.setArguments(bundle);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, frag).addToBackStack(null).commit();
+
+           // fragmentManager.beginTransaction().replace(R.id.content_frame, new FirstFragment())
+             //       .addToBackStack(null).commit();
             //specific rides
         } else if (id == R.id.nav_specific_rides) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame , new SecondFragment())
-            .addToBackStack(null).commit();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("myDriver", mDriver );
+            SecondFragment frag = new SecondFragment();
+            frag.setArguments(bundle);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, frag).addToBackStack(null).commit();
+            //fragmentManager.beginTransaction().replace(R.id.content_frame , new SecondFragment())
+           // .addToBackStack(null).commit();
             //if the user press exit return the app to the login activity
         } else if (id == R.id.nav_exit) {
             //fragmentManager.beginTransaction().replace(R.id.content_frame , new ExitFragment()).commit();

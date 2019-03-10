@@ -29,12 +29,12 @@ public class Firebase_DBManager implements Backend {
 
 
     private static final String TAG = "Firebase_DBManager";
-    static List<Driver> driverList = new ArrayList<>();
-    static List<Ride> rideList = new ArrayList<>();
+    static ArrayList<Driver> driverList = new ArrayList<>();
+    static ArrayList<Ride> rideList = new ArrayList<>();
     private static ChildEventListener driverRefChildEventListener;
     private static ChildEventListener rideRefChildEventListener;
-    public List<Driver> tmp = new ArrayList<>();
     static Context mContext;
+    Boolean isComplete = false;
 
     static DatabaseReference driverRef;
     static DatabaseReference rideRef;
@@ -46,7 +46,6 @@ public class Firebase_DBManager implements Backend {
         rideRef = database.getReference("rides");
     }
 
-
     public List<Driver> getDriverList() {
         return driverList;
     }
@@ -55,6 +54,10 @@ public class Firebase_DBManager implements Backend {
         return rideList;
     }
 
+    /**
+     * ctor
+     * @param context app context
+     */
     public Firebase_DBManager(Context context) {
         mContext = context;
 
@@ -62,6 +65,7 @@ public class Firebase_DBManager implements Backend {
             @Override
             public void OnDataChanged(List<Driver> obj) {
                 Log.d(TAG, "OnDataChanged() called with: obj = [" + obj.size() + "]");
+                isComplete = true;
 
             }
 
@@ -107,35 +111,30 @@ public class Firebase_DBManager implements Backend {
         });
     }
 
-    public List<Ride> getRides() {
-        /*rideRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Ride ride = snapshot.getValue(Ride.class);
-                    rideList.add(ride);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
+    /**
+     * @return ride list
+     */
+    public ArrayList<Ride> getRides() {
         return rideList;
     }
 
+    /**
+     * The function return all availble rides
+     */
     @Override
     public ArrayList<Ride> getAvailableRides() {
         ArrayList<Ride> availableRides = new ArrayList<>();
         for (Ride r : rideList) {
-            if (r.getStatus() == "AVAILABLE") {
+            if (r.getStatus().equals("AVAILABLE")) {
                 availableRides.add(r);
             }
         }
         return availableRides;
     }
 
+    /**
+     * The function return all rides by driver name
+     */
     @Override
     public ArrayList<String> getDriversNames() {
         ArrayList<String> driversNames = new ArrayList<>();
@@ -145,28 +144,39 @@ public class Firebase_DBManager implements Backend {
         return driversNames;
     }
 
+    /**
+     * The function return all the rides that were not handled
+     */
     @Override
     public ArrayList<Ride> getUnhandledRides() {
         ArrayList<Ride> availableRides = new ArrayList<>();
         for (Ride r : rideList) {
-            if (r.getStatus() == "AVAILABLE") {
+            if (r.getStatus().equals("AVAILABLE")) {
                 availableRides.add(r);
             }
         }
         return availableRides;
     }
 
+    /**
+     *The function return all the finished rides
+     */
     @Override
     public ArrayList<Ride> getFinishedRides() {
         ArrayList<Ride> finishedRides = new ArrayList<>();
         for (Ride r : rideList) {
-            if (r.getStatus() == "DONE") {
+            if (r.getStatus().equals("DONE")) {
                 finishedRides.add(r);
             }
         }
         return finishedRides;
     }
 
+    /***
+     * The function return all the rides of a specific friver
+     * @param driverName
+     * @return list with rides
+     */
     @Override
     public ArrayList<Ride> getRidesByDriver(String driverName) {
         ArrayList<Ride> ridesByName = new ArrayList<>();
@@ -180,6 +190,11 @@ public class Firebase_DBManager implements Backend {
        return ridesByName;
     }
 
+    /**
+     * the function return all the rides to a specific fity
+     * @param city
+     * @return ride list
+     */
     @Override
     public ArrayList<Ride> getRidesByCity(String city) {
         ArrayList<Ride> ridesByCity = new ArrayList<>();
@@ -188,6 +203,7 @@ public class Firebase_DBManager implements Backend {
         {
         if (gc.isPresent()) {
             for(Ride r: rideList) {
+                //try to convert string of address to location
                 List<Address> addresses = gc.getFromLocationName(r.getDestination(), 1);
                 String cityName = addresses.get(0).getAddressLine(0);
                 if(city.equals(cityName) && r.getStatus().equals("AVAILABLE"))
@@ -203,11 +219,17 @@ public class Firebase_DBManager implements Backend {
         return ridesByCity;
     }
 
+    /**
+     * return all the rides that equal or smaller from a given distance
+     * @param distance
+     * @return ride of lists
+     */
     @Override
     public ArrayList<Ride> getRidesByDistance(float distance) {
         LocationClass lc = new LocationClass(mContext);
         ArrayList<Ride> ridesByDistance = new ArrayList<>();
         float mDistance;
+        //driver location
         Location driverLocation = lc.getMyLocation();
         for(Ride r : rideList) {
             Location distLocation = lc.addressToLocation(r.getDestination());
@@ -220,6 +242,11 @@ public class Firebase_DBManager implements Backend {
         return ridesByDistance;
     }
 
+    /**
+     * return all rides that were on a specific date
+     * @param date
+     * @return
+     */
     @Override
     public ArrayList<Ride> getRidesByDate(Date date) {
         ArrayList<Ride> ridesByDate = new ArrayList<>();
@@ -233,6 +260,11 @@ public class Firebase_DBManager implements Backend {
         return null;
     }
 
+    /**
+     * calculate payment for all rides and return the ones that under a threshold payment
+     * @param payment
+     * @return
+     */
     @Override
     public ArrayList<Ride> getRidesByPayment(float payment) {
         ArrayList<Ride> ridesByPayment = new ArrayList<>();
@@ -242,6 +274,7 @@ public class Firebase_DBManager implements Backend {
         float distance, mPayment;
         for(Ride r : rideList)
         {
+            //calculate only for dine rides
             if(r.getStatus().equals("DONE"))
             {
                 a = r.getDestination();
@@ -259,6 +292,12 @@ public class Firebase_DBManager implements Backend {
         return ridesByPayment;
     }
 
+    /**
+     * the function update details in rides
+     * @param id of the entry to update
+     * @param key which field in the entry
+     * @param value the value to update
+     */
     @Override
     public void updateRide(String id, String key, String value) {
         try {
@@ -269,57 +308,31 @@ public class Firebase_DBManager implements Backend {
 
     }
 
-    public void tmp(List<Driver> a)
-    {
-        tmp.addAll(a);
-    }
-    public void getDrivers(final MyCallback myCallback) {
-
-        /*driverRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Driver driver = snapshot.getValue(Driver.class);
-                    //driverList.add(driver);
-                    myCallback.onCallback(driver);
-                   // tmp(driverList);
-                }
-                done(driverList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        // return driverList;*/
+    @Override
+    public boolean isComplete() {
+        return isComplete;
     }
 
-    public void callGetDrivers()
-    {
-        getDrivers(new MyCallback() {
-            @Override
-            public void onCallback(Driver value) {
-                driverList.add(value);
-            }
-        });
-    }
-    private void done(List<Driver> ls) {
-        tmp.addAll(ls);
+    /**
+     * @return all drivers list
+     */
+    public ArrayList<Driver> getDrivers() {
+
+        return driverList;
     }
 
+    /**
+     * stop the listener fron notifying to Firebase
+     */
     public static void stopNotifyToRideList() {
         if (rideRefChildEventListener != null) {
             rideRef.removeEventListener(rideRefChildEventListener);
             rideRefChildEventListener = null;
-
-
         }
     }
-
+    /**
+     * stop the listener fron notifying to Firebase
+     */
     public static void stopNotifyToDriverList() {
         if (driverRefChildEventListener != null) {
             driverRef.removeEventListener(driverRefChildEventListener);
@@ -328,7 +341,9 @@ public class Firebase_DBManager implements Backend {
     }
 
 
-    // Attach a listener to read the data at our Drivers reference
+    /**
+     *    Attach a listener to read the data at our Drivers reference
+     */
     public static void NotifyToDriverList(final NotifyDataChange<List<Driver>> notifyDataChange) {
         if (notifyDataChange != null) {
             if (driverRefChildEventListener != null) {
@@ -347,26 +362,26 @@ public class Firebase_DBManager implements Backend {
                 }
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Driver student = dataSnapshot.getValue(Driver.class);
-                    //Long id = Long.parseLong(dataSnapshot.getKey());
-                    /*for (int i = 0; i < studentList.size(); i++) {
-                        if (studentList.get(i).getId().equals(id)) {
-                            studentList.set(i, student);
+                    Driver driver = dataSnapshot.getValue(Driver.class);
+                    String id = dataSnapshot.getKey();
+                    for (int i = 0; i < driverList.size(); i++) {
+                        if (driverList.get(i).getId().equals(id)) {
+                            driverList.set(i, driver);
                             break;
                         }
-                    }*/
+                    }
                     notifyDataChange.OnDataChanged(driverList);
                 }
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     Driver driver = dataSnapshot.getValue(Driver.class);
-                    Long id = Long.parseLong(dataSnapshot.getKey());
-                    /*for (int i = 0; i < studentList.size(); i++) {
-                        if (studentList.get(i).getId() ==  id) {
-                            studentList.remove(i);
+                    String id = dataSnapshot.getKey();
+                    for (int i = 0; i < driverList.size(); i++) {
+                        if (driverList.get(i).getId().equals(id)) {
+                            driverList.remove(i);
                             break;
                         }
-                    }*/
+                    }
                     notifyDataChange.OnDataChanged(driverList);
                 }
                 @Override
@@ -392,7 +407,7 @@ public class Firebase_DBManager implements Backend {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Ride ride = dataSnapshot.getValue(Ride.class);
                     String id = dataSnapshot.getKey();
-                    //R.setId(Long.parseLong(id));
+                    ride.setID(id);
                     rideList.add(ride);
                     notifyDataChange.OnDataChanged(rideList);
                 }
@@ -401,24 +416,25 @@ public class Firebase_DBManager implements Backend {
                     Ride ride = dataSnapshot.getValue(Ride.class);
                     String id = dataSnapshot.getKey();
                     ride.setID(id);
-                   /* for (int i = 0; i < studentList.size(); i++) {
-                        if (studentList.get(i).getId().equals(id)) {
-                            studentList.set(i, student);
+                   for (int i = 0; i < rideList.size(); i++) {
+                        if (rideList.get(i).getID().equals(id)) {
+                            rideList.set(i, ride);
                             break;
                         }
-                    }    */
+                    }
                     notifyDataChange.OnDataChanged(rideList);
                 }
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     Ride ride = dataSnapshot.getValue(Ride.class);
-                    Long id = Long.parseLong(dataSnapshot.getKey());
-                    /*for (int i = 0; i < studentList.size(); i++) {
-                        if (studentList.get(i).getId() ==  id) {
-                            studentList.remove(i);
+                    String id = dataSnapshot.getKey();
+                    ride.setID(id);
+                    for (int i = 0; i < rideList.size(); i++) {
+                        if (rideList.get(i).getID().equals(id)) {
+                            rideList.set(i, ride);
                             break;
                         }
-                    }      */
+                    }
                     notifyDataChange.OnDataChanged(rideList);
                 }
                 @Override
@@ -432,6 +448,12 @@ public class Firebase_DBManager implements Backend {
         }
     }
 
+    /**
+     * The function add ride tofirebase
+     * @param ride
+     * @param action interface
+     * @throws Exception
+     */
     public void addRide(final Ride ride, final Action<String> action) throws Exception
     {
         rideRef.push().setValue(ride).addOnSuccessListener(new OnSuccessListener<Void>() {

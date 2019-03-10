@@ -48,11 +48,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button loginButton;
     private Button registerButton;
     private Toolbar toolbar;
+    List<Driver> driverList;
+    Backend instance;
 
     /**
      * Find the Views in the layout
      */
     private void findViews() {
+        instance = BackendFactory.getInstance(getApplicationContext());
+        //((Firebase_DBManager)instance).callGetDrivers();
         emailEditext = (EditText) findViewById(R.id.email_editext);
         passwordEditext = (EditText) findViewById(R.id.password_edittext);
         loginButton = (Button) findViewById(R.id.login_button);
@@ -73,10 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadSharedPreferences();
         getRegisterData();
         initTextChangeListener();
-        Backend instance = BackendFactory.getInstance(getApplicationContext());
-        //Firebase_DBManager db = new Firebase_DBManager(getApplicationContext());
-        ((Firebase_DBManager)instance).callGetDrivers();
-       addRides();
+        //addRides();
        // List<Driver> ls = db.tmp;
 
     }
@@ -87,14 +88,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             //String jsonObj = quickParse(ride);
             Backend instance = BackendFactory.getInstance(getApplicationContext());
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i <1; i++) {
                 Ride ride = new Ride();
-                ride.setDestination("The Hebrew University Secondary School, Jerusalem");
-                ride.setPhoneNumber("050732320");
-                ride.setOrigin("Jaffa Street 15,jerusalem");
+                ride.setDestination("Gan Hachayot Hatanachi , Jerusalem");
+                ride.setPhoneNumber("0545423200");
+                ride.setOrigin("Beit HaDfus 7, Jerusalem");
                 ride.setStartingTime("12:10");
-                ride.setPassengerName("Avi Luecter");
-                ride.setPassengerMail("Dina@gmail.com");
+                ride.setPassengerName("Gadi choen");
+                ride.setPassengerMail("Gadi@gmail.com");
                 ride.setCreditCard("1234123445341234");
                 ride.setStatus(Ride.Status.AVAILABLE);
 
@@ -150,9 +151,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v == loginButton) {
             //save the email and the password into shared preference
             saveSharedPreferences();
-            //call new intent with the navigation drawer
-            Intent intent = new Intent(this , NavigationDrawerActivity.class);
-            startActivity(intent);
+            //get driver list
+            driverList = instance.getDrivers();
+            //send to function to check if email and password are correct
+            Driver d = checkLogin();
+            if(d != null) {
+                //call new intent with the navigation drawer
+                Intent intent = new Intent(this, NavigationDrawerActivity.class);
+                intent.putExtra("mDriver" ,d);
+                startActivity(intent);
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "incorrect email or password", Toast.LENGTH_LONG).show();
+                return;
+            }
         }
         if(v == registerButton)
         {
@@ -162,6 +174,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * check if the email and password are correct
+     * @return the driver entity if yes nad null if not
+     */
+    private Driver checkLogin() {
+        for(Driver d : driverList)
+        {
+                if(d.getPassword().equals(passwordEditext.getText().toString()) &&
+                        d.getEmail().equals(emailEditext.getText().toString()))
+                {
+                    return d;
+                }
+
+        }
+        return null;
+    }
+
+    /**
+     * check if the focus has change in one of the edit text
+     */
     private void initTextChangeListener() {
         //check if the focus has change in one of the edit text
         View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
