@@ -3,6 +3,7 @@ package com.example.racheli.gettaxi2.controller;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -30,6 +31,8 @@ import java.util.zip.Inflater;
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    static ComponentName service = null;// service to see notification
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        if (service == null) {//service does'nt start
+            Intent intent = new Intent(getBaseContext(), NotificationService.class);//create new notification service intent
+            service = startService(intent);// start the intent
+        }
     }
 
     /**

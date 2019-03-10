@@ -2,7 +2,7 @@ package com.example.racheli.gettaxi2.model.entities;
 
 public class Driver implements java.io.Serializable{
 
-    private static final long serialVersionUID = 1L;
+    //private static final long serialVersionUID = 1L;
     private String fullName;
     private String id;
     private String phoneNumber;

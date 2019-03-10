@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button registerButton;
     private Toolbar toolbar;
 
+
+
     /**
      * Find the Views in the layout
      */
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Backend instance = BackendFactory.getInstance(getApplicationContext());
         //Firebase_DBManager db = new Firebase_DBManager(getApplicationContext());
         ((Firebase_DBManager)instance).callGetDrivers();
-       addRides();
+        addRides();
        // List<Driver> ls = db.tmp;
 
     }
@@ -87,13 +90,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             //String jsonObj = quickParse(ride);
             Backend instance = BackendFactory.getInstance(getApplicationContext());
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 1; i++) {
                 Ride ride = new Ride();
                 ride.setDestination("The Hebrew University Secondary School, Jerusalem");
                 ride.setPhoneNumber("050732320");
                 ride.setOrigin("Jaffa Street 15,jerusalem");
                 ride.setStartingTime("12:10");
-                ride.setPassengerName("Avi Luecter");
+                ride.setPassengerName("Avi Leuchter");
                 ride.setPassengerMail("Dina@gmail.com");
                 ride.setCreditCard("1234123445341234");
                 ride.setStatus(Ride.Status.AVAILABLE);

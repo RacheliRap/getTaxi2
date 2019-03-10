@@ -34,6 +34,20 @@
             android:name=".controller.NavigationDrawerActivity"
             android:label="@string/title_activity_navigation_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
+
+
+        <service
+            android:name=".controller.NotificationService"
+            android:enabled="true"
+            android:exported="true" />
+
+
+        <receiver android:name=".controller.BroadCastReceiverNotification">
+            <intent-filter>
+                <action android:name="MyReceiver" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

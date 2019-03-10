@@ -33,6 +33,7 @@ public class Firebase_DBManager implements Backend {
     static List<Ride> rideList = new ArrayList<>();
     private static ChildEventListener driverRefChildEventListener;
     private static ChildEventListener rideRefChildEventListener;
+    private static ChildEventListener serviceListener;
     public List<Driver> tmp = new ArrayList<>();
     static Context mContext;
 
@@ -55,12 +56,22 @@ public class Firebase_DBManager implements Backend {
         return rideList;
     }
 
+    /**
+     * interface NotifyDataChange. For update the list from the firebase.
+     * @param <T>
+     */
+    public interface NotifyDataChange<T>{
+        void onDataChanged(T obj);
+        void onFailure(Exception exp);
+    }
+
+
     public Firebase_DBManager(Context context) {
         mContext = context;
 
         NotifyToDriverList(new NotifyDataChange<List<Driver>>() {
             @Override
-            public void OnDataChanged(List<Driver> obj) {
+            public void onDataChanged(List<Driver> obj) {
                 Log.d(TAG, "OnDataChanged() called with: obj = [" + obj.size() + "]");
 
             }
@@ -74,7 +85,7 @@ public class Firebase_DBManager implements Backend {
 
         NotifyToRideList(new NotifyDataChange<List<Ride>>() {
             @Override
-            public void OnDataChanged(List<Ride> obj) {
+            public void onDataChanged(List<Ride> obj) {
                 Log.d(TAG, "OnDataChanged() called with: obj = [" + obj.size() + "]");
 
             }
@@ -88,6 +99,7 @@ public class Firebase_DBManager implements Backend {
 
 
     }
+
 
     @Override
     public void addDriver(final Driver driver, final Action<String> action) throws Exception {
@@ -343,7 +355,7 @@ public class Firebase_DBManager implements Backend {
                     String id = dataSnapshot.getKey();
                     driver.setId(id);
                     driverList.add(driver);
-                    notifyDataChange.OnDataChanged(driverList);
+                    notifyDataChange.onDataChanged(driverList);
                 }
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -355,7 +367,7 @@ public class Firebase_DBManager implements Backend {
                             break;
                         }
                     }*/
-                    notifyDataChange.OnDataChanged(driverList);
+                    notifyDataChange.onDataChanged(driverList);
                 }
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -367,7 +379,7 @@ public class Firebase_DBManager implements Backend {
                             break;
                         }
                     }*/
-                    notifyDataChange.OnDataChanged(driverList);
+                    notifyDataChange.onDataChanged(driverList);
                 }
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
@@ -383,8 +395,36 @@ public class Firebase_DBManager implements Backend {
     public static void NotifyToRideList(final NotifyDataChange<List<Ride>> notifyDataChange) {
         if (notifyDataChange != null) {
             if (rideRefChildEventListener != null) {
-                notifyDataChange.onFailure(new Exception("first unNotify student list"));
-                return;
+                if (serviceListener != null) {
+                    notifyDataChange.onFailure(new Exception("first unNotify student list"));
+                    return;
+                }
+                else {
+                    serviceListener = new ChildEventListener() {//create new listener to service- when drive change
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            notifyDataChange.onDataChanged(rideList);//notification
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    };
+                    rideRef.addChildEventListener(serviceListener);//listener to drive list
+                    return;
+                }
             }
             rideList.clear();
             rideRefChildEventListener = new ChildEventListener() {
@@ -394,7 +434,7 @@ public class Firebase_DBManager implements Backend {
                     String id = dataSnapshot.getKey();
                     //R.setId(Long.parseLong(id));
                     rideList.add(ride);
-                    notifyDataChange.OnDataChanged(rideList);
+                    notifyDataChange.onDataChanged(rideList);
                 }
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -407,7 +447,7 @@ public class Firebase_DBManager implements Backend {
                             break;
                         }
                     }    */
-                    notifyDataChange.OnDataChanged(rideList);
+                    notifyDataChange.onDataChanged(rideList);
                 }
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -419,7 +459,7 @@ public class Firebase_DBManager implements Backend {
                             break;
                         }
                     }      */
-                    notifyDataChange.OnDataChanged(rideList);
+                    notifyDataChange.onDataChanged(rideList);
                 }
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
