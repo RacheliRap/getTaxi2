@@ -2,6 +2,7 @@ package com.example.racheli.gettaxi2.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -9,6 +10,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -180,71 +182,46 @@ public class LocationClass extends Activity{
                 return distance;
 
         }
-    public static boolean canGetLocation() {
-        return isLocationEnabled(); // application context
+
+    /**
+     * The function call async task class which check if the device location is on
+     * @return true if the location is on
+     */
+    public  boolean canGetLocation() {
+            Boolean result = false;
+            try {
+                 result = new isLocationEnabled().execute(1, 2, 3).get();
+            }
+            catch (Exception e)
+            {
+
+            }
+        return result;
     }
 
     /**
-     * check if the device location is on
-     * @return
+     * async task class'check if the device location is on
      */
-    public static boolean isLocationEnabled() {
-        int locationMode = 0;
-        String locationProviders;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
-            }
-            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-        } else {
-            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            return !TextUtils.isEmpty(locationProviders);
-        }
-    }
-
-    public void displayLocationSettingsRequest() {
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API).build();
-        googleApiClient.connect();
-
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(10000 / 2);
-
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
-        builder.setAlwaysShow(true);
-
-        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        Log.i(TAG, "All location settings are satisfied.");
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
-
-                        try {
-                            // Show the dialog by calling startResolutionForResult(), and check the result
-                            // in onActivityResult().
-                            status.startResolutionForResult((Activity)context, REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.i(TAG, "PendingIntent unable to execute request.");
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
-                        break;
+    private class isLocationEnabled extends AsyncTask<Integer, Integer, Boolean> {
+        protected Boolean doInBackground(Integer...mInt) {
+            int locationMode = 0;
+            String locationProviders;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                try {
+                    locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                } catch (Settings.SettingNotFoundException e) {
+                    e.printStackTrace();
                 }
+                return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+            } else {
+                locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                return !TextUtils.isEmpty(locationProviders);
             }
-        });
-    }
+        }
+        protected void onProgressUpdate(Integer... progress) { }
 
+        protected void onPostExecute(Long result) { }
+
+        }
 }
 

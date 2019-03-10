@@ -23,11 +23,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.racheli.gettaxi2.R;
+import com.example.racheli.gettaxi2.model.backend.Backend;
+import com.example.racheli.gettaxi2.model.backend.BackendFactory;
+import com.example.racheli.gettaxi2.model.datasource.Firebase_DBManager;
+import com.example.racheli.gettaxi2.model.entities.Driver;
 import com.example.racheli.gettaxi2.model.entities.Ride;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -39,12 +41,16 @@ public class SecondFragment extends android.app.Fragment {
     static Context context;
     SearchView searchView;
     ExpendableAdapter adapter;
-    List<Ride> rideList = new ArrayList<>();
     Ride tmpRide;
+    List<Ride> rideList = new ArrayList<>();
+    List<Driver> driverList = new ArrayList<>();
+    Backend instance;
+    Driver mDriver;
 
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, @NonNull ViewGroup container, Bundle savedInstanceState) {
+         mDriver = (Driver)getArguments().getSerializable("myDriver");
         view = inflater.inflate(R.layout.fragment_search, container, false);
         return view;
     }
@@ -59,9 +65,10 @@ public class SecondFragment extends android.app.Fragment {
      * Find the Views in the layout
      */
     private void findView() {
+        instance = BackendFactory.getInstance(context);
         recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        adapter = new ExpendableAdapter(initDemoItems(), new ListItemClickListener() {
+        adapter = new ExpendableAdapter(initItems(), new ListItemClickListener() {
             @Override
             public void onItemClicked(ExpendableItem item, int position) {
                 showDialog(item , position);
@@ -77,31 +84,26 @@ public class SecondFragment extends android.app.Fragment {
         context=getActivity();
     }
 
-    private List<Ride> initDemoItems() {
+    /**
+     * The function init the items for the recycle view
+     * @return list with the items
+     */
+    private List<Ride> initItems() {
         List<Ride> result = new ArrayList<>(1000);
-        for(int i = 0; i < 3; i++)
-        {
-            Ride ride = new Ride();
-            ride.setDestination( " Sderot Golda Me'ir 45, Jerusalem");
-            ride.setPhoneNumber("0507270820");
-            ride.setOrigin(" Beit HaDfus Street 20, jerusalem");
-            ride.setStartingTime("15:00");
-            ride.setRideDate(new SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().getTime()));
-            rideList.add(ride);
-        }
+        driverList = ((Firebase_DBManager)instance).getDriverList();
+        rideList = instance.getRidesByDriver(mDriver.getFullName());
 
-
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < rideList.size(); i++) {
             ExpendableItem item = new ExpendableItem();
-            item.setDestination(rideList.get(i).getDestination().toString());
+            item.setDestination(rideList.get(i).getDestination());
             LocationClass locationClass = new LocationClass(context);
-            Location origin = locationClass.addressToLocation(rideList.get(i).getOrigin().toString());
-            Location destination = locationClass.addressToLocation(rideList.get(i).getDestination().toString());
+            Location origin = locationClass.addressToLocation(rideList.get(i).getOrigin());
+            Location destination = locationClass.addressToLocation(rideList.get(i).getDestination());
             float distance = Math.round(locationClass.calculateDistance(origin, destination));
             item.setDistance(distance);
             item.setRideDate(rideList.get(i).getRideDate());
             ChildItem child = new ChildItem();
-            child.setOrigin(rideList.get(i).getOrigin().toString());
+            child.setOrigin(rideList.get(i).getOrigin());
             child.setStartingTime(rideList.get(i).getStartingTime());
             child.setPhoneNumber(rideList.get(i).getPhoneNumber());
             item.childs.add(child);
@@ -233,7 +235,7 @@ public class SecondFragment extends android.app.Fragment {
                 //set view holder text for the recycle view
                 ExpendableAdapter.ExpendableViewHolder exHolder = (ExpendableAdapter.ExpendableViewHolder) holder;
                 exHolder.location_txt.setText(item.getDestination());
-                exHolder.distance_txt.setText(Float.toString(((ExpendableItem)item).getDistance()) + " km");
+                exHolder.distance_txt.setText(Float.toString(((ExpendableItem)item).getDistance()) + " km ride");
                 exHolder.date_txt.setText("At " + item.getRideDate());
             } else {
                 //set child view holder text for the recycle view
@@ -322,7 +324,8 @@ public class SecondFragment extends android.app.Fragment {
          */
         @Override
         public int getItemViewType(int position) {
-            return data.get(position) instanceof ExpendableItem ? ExpendableAdapter.TYPES.EXPENDABLE.value : ExpendableAdapter.TYPES.CHILD.value;
+            return data.get(position) instanceof ExpendableItem ? ExpendableAdapter.TYPES.EXPENDABLE.value
+                    : ExpendableAdapter.TYPES.CHILD.value;
         }
 
         /**

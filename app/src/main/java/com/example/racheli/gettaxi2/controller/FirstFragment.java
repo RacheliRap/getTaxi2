@@ -23,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +44,8 @@ import com.example.racheli.gettaxi2.model.entities.Ride;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
@@ -52,6 +53,7 @@ import static android.support.v4.content.ContextCompat.checkSelfPermission;
  * The class handle the first fragment - available rides
  */
 public class FirstFragment extends android.app.Fragment {
+    private static final String TAG = "Firebase_DBManager";
     View view;
     RecyclerView recyclerView;
     static Context context;
@@ -61,13 +63,14 @@ public class FirstFragment extends android.app.Fragment {
     List<Driver> driverList = new ArrayList<>();
     Backend instance;
     Ride tmpRide;
-    List<Ride> ridels = new ArrayList<>();
+    Driver mDriver;
 
 
 
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, @NonNull ViewGroup container, Bundle savedInstanceState) {
+        mDriver = (Driver)getArguments().getSerializable("myDriver");
         view = inflater.inflate(R.layout.fragment_search, container, false);
         return view;
     }
@@ -82,19 +85,28 @@ public class FirstFragment extends android.app.Fragment {
      * Find the Views in the layout
      */
     private void findViews() {
+        long ms = System.currentTimeMillis();
+        instance = BackendFactory.getInstance(context);
         recyclerView = (RecyclerView) getView().findViewById(R.id.myRecyclerView);
+        String m = "After creating recycle view" + (ms - System.currentTimeMillis());
+        Log.i(TAG,m);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        adapter = new ExpendableAdapter(initDemoItems(), new ListItemClickListener() {
+        m = "After set layout mangager" + (ms - System.currentTimeMillis());
+        Log.i(TAG, m);
+        adapter = new ExpendableAdapter(initItems(), new ListItemClickListener() {
             @Override
             public void onItemClicked(ExpendableItem item, int position) {
                 showDialog(item, position);
             }
         });
+        m = "AFter create adapter" + (ms - System.currentTimeMillis());
+        Log.i(TAG, m);
         recyclerView.setAdapter(adapter);
+        m = "AFter set adapter" + (ms - System.currentTimeMillis());
+        Log.i(TAG, m);
         searchView = (SearchView) getView().findViewById(R.id.simpleSearchView);
-        instance = BackendFactory.getInstance(context);
-        driverList = ((Firebase_DBManager)instance).getDriverList();
-        rideList = ((Firebase_DBManager)instance).getRideList();
+
+
     }
 
     @Override
@@ -102,19 +114,21 @@ public class FirstFragment extends android.app.Fragment {
         super.onAttach(activity);
         context=getActivity();
     }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
 
-    private List<Ride> initDemoItems() {
+    }
+
+    /**
+     * The function init the items for the recycle view
+     * @return list with the items
+     */
+    private List<Ride> initItems() {
+        driverList = instance.getDrivers();
+        rideList = instance.getRides();
         List<Ride> result = new ArrayList<>(1000);
-        /*for(int i = 0; i < 3; i++)
-        {
-            Ride ride = new Ride();
-            ride.setDestination( " Sderot Golda Me'ir 45, Jerusalem");
-            ride.setPhoneNumber("0507270820");
-            ride.setOrigin(" Beit HaDfus Street 20, jerusalem");
-            ride.setStartingTime("15:00");
-            rideList.add(ride);
-        }*/
-
 
         for (int i = 0; i < rideList.size(); i++) {
             ExpendableItem item = new FirstFragment.ExpendableItem();
@@ -172,28 +186,29 @@ public class FirstFragment extends android.app.Fragment {
                 //update the ride status and the ride date
                 case Dialog.BUTTON_NEUTRAL: {
                     instance.updateRide(tmpRide.getID(), "status", "DONE");
-                    instance.updateRide(tmpRide.getID(), "rideDate", new SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().getTime()).toString());
+                    instance.updateRide(tmpRide.getID(), "rideDate", new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).format(Calendar.getInstance().getTime()));
+                    instance.updateRide(tmpRide.getID(), "driverName", mDriver.getFullName());
 
                     break;
                 }
                 //the driver picked the ride
                 case Dialog.BUTTON_POSITIVE: {
-                    //TODO change in ride the driver name
-                    instance.updateRide(tmpRide.getID(), "driverName", "change me later");
+                    instance.updateRide(tmpRide.getID(), "driverName", mDriver.getFullName());
+                    instance.updateRide(tmpRide.getID(), "rideDate", new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).format(Calendar.getInstance().getTime()));
                     showNotification();
                     ((Activity)context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Uri uri = Uri.parse("smsto:+972586367706");
+                            String phone = tmpRide.getPhoneNumber();
+                            Uri uri = Uri.parse("smsto:+972"+phone);
                             Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-                            String message = "Hi,\n you ordered a ride from" + tmpRide.getOrigin() +
-                                    "to" + tmpRide.getDestination()+ "\nour driver will be in touch:)" ;
+                            String message = "Hi,\n you ordered a ride from " + tmpRide.getOrigin() +
+                                    "to " + tmpRide.getDestination()+ "\nour driver will be in touch:)" ;
                             intent.putExtra("sms_body", message);
                             context.startActivity(intent);
                             }
                     }
                     );
-
                     break;
                 }
             }
@@ -231,7 +246,7 @@ public class FirstFragment extends android.app.Fragment {
                 .setSmallIcon(R.drawable.transparent_icon)
                 .setContentTitle("New Ride")
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("You just added a new ride to" + tmpRide.getDestination())) //expand
+                        .bigText("You just added a new ride to " + tmpRide.getDestination())) //expand
                 .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
                 .setContentIntent(contentIntent)
                 .setContentInfo("Info");
@@ -311,7 +326,7 @@ public class FirstFragment extends android.app.Fragment {
                 //set view holder text for the recycle view
                 ExpendableAdapter.ExpendableViewHolder exHolder = (ExpendableAdapter.ExpendableViewHolder) holder;
                 exHolder.location_txt.setText(item.getDestination());
-                exHolder.distance_txt.setText(Float.toString(((ExpendableItem)item).getDistance())+ " km");
+                exHolder.distance_txt.setText(Float.toString(((ExpendableItem)item).getDistance())+ " km away" );
 
             } else {
                 //set child view holder text for the recycle view
@@ -399,7 +414,8 @@ public class FirstFragment extends android.app.Fragment {
          */
         @Override
         public int getItemViewType(int position) {
-            return data.get(position) instanceof ExpendableItem ? FirstFragment.ExpendableAdapter.TYPES.EXPENDABLE.value : FirstFragment.ExpendableAdapter.TYPES.CHILD.value;
+            return data.get(position) instanceof ExpendableItem ? FirstFragment.ExpendableAdapter.TYPES.EXPENDABLE.value
+                    : FirstFragment.ExpendableAdapter.TYPES.CHILD.value;
         }
 
         /**
@@ -487,15 +503,7 @@ public class FirstFragment extends android.app.Fragment {
      */
     private class ExpendableItem extends Ride {
         public boolean isOpen;//if the item is expand or not
-        //float distance;
         List<ChildItem> childs = new ArrayList<>();
 
-        /*public void setDistance(Float distance) {
-            this.distance = distance;
-        }
-
-        public float getDistance() {
-            return distance;
-        }*/
     }
 }

@@ -12,8 +12,8 @@ import java.util.List;
 public interface Backend {
 
     void addDriver(final Driver driver , final Action<String> action) throws Exception;
-    void getDrivers(MyCallback myCallback);
-    List<Ride> getRides();
+    ArrayList<Driver> getDrivers();
+    ArrayList<Ride> getRides();
     ArrayList<Ride> getAvailableRides();
     ArrayList<String> getDriversNames();
     ArrayList<Ride> getUnhandledRides();
@@ -24,6 +24,7 @@ public interface Backend {
     ArrayList<Ride> getRidesByDate(Date date);
     ArrayList<Ride> getRidesByPayment(float payment);
     void updateRide(String id, String key, String value);
+    boolean isComplete();//return true if reading the data fromfire base is done
 
 
 
