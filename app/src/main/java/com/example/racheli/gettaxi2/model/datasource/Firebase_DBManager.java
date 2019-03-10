@@ -186,7 +186,7 @@ public class Firebase_DBManager implements Backend {
     }
 
     /***
-     * The function return all the rides of a specific friver
+     * The function return all the rides of a specific driver
      * @param driverName
      * @return list with rides
      */
@@ -195,7 +195,7 @@ public class Firebase_DBManager implements Backend {
         ArrayList<Ride> ridesByName = new ArrayList<>();
        for(Ride r:rideList)
        {
-           if(r.getDriverName() == driverName)
+           if(r.getDriverName().equals(driverName))
            {
                ridesByName.add(r);
            }
@@ -270,7 +270,7 @@ public class Firebase_DBManager implements Backend {
                 ridesByDate.add(r);
             }
         }
-        return null;
+        return ridesByDate;
     }
 
     /**
@@ -321,6 +321,10 @@ public class Firebase_DBManager implements Backend {
 
     }
 
+    /**
+     * check if the listener from firebase finished reading
+     * @return true if it does
+     */
     @Override
     public boolean isComplete() {
         return isComplete;

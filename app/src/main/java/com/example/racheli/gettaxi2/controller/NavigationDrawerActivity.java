@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.racheli.gettaxi2.R;
@@ -36,6 +37,7 @@ import java.util.zip.Inflater;
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Driver mDriver;
+    TextView welcome_textView;
 
     static ComponentName service = null;// service to see notification
 
@@ -61,6 +63,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
             if(this.getIntent().getExtras().containsKey("mDriver"))
             {
                 mDriver = (Driver)(getIntent().getSerializableExtra("mDriver"));
+                welcome_textView = findViewById(R.id.nav_drawer_textview);
+                welcome_textView.setText(mDriver.getFullName() + ",\n Welcome back!");
             }
         }
 
@@ -189,6 +193,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        welcome_textView.setText("");
         FragmentManager fragmentManager = getFragmentManager();
         //available rides
         if (id == R.id.nav_availabe_rides) {
@@ -219,7 +224,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://gett.com/il/about/"));
             startActivity(browserIntent);
 
-        } else if (id == R.id.nav_contact_us) {
+        } /*else if (id == R.id.nav_contact_us) {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
             String [] address = {"support@myCab.com"} ;
             emailIntent.putExtra(Intent.EXTRA_EMAIL, address);
@@ -235,7 +240,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
             sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"subject");
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
-        }
+        }*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -8,6 +8,10 @@ import com.example.racheli.gettaxi2.R;
 import com.example.racheli.gettaxi2.model.backend.Backend;
 import com.example.racheli.gettaxi2.model.backend.BackendFactory;
 
+/**
+ * splash activity, wait till all the rides has benn read from fire base,
+ * and than pass the user to the main activity
+ */
 public class SplashActivity extends Activity {
     Backend instance;
 
@@ -23,6 +27,7 @@ public class SplashActivity extends Activity {
             public void run() {
                 try {
                     super.run();
+                    //while rides are still being read from fire base
                     while(!instance.isComplete()) {
                         sleep(500);
                     }

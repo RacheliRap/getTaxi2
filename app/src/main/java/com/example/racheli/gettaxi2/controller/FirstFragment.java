@@ -141,7 +141,7 @@ public class FirstFragment extends android.app.Fragment {
             item.setDestination(rideList.get(i).getDestination());
             Location driverLocation = locationClass.getMyLocation();
             Location passengerLocation = locationClass.addressToLocation(rideList.get(i).getOrigin());
-            float distance = Math.round(locationClass.calculateDistance(driverLocation, passengerLocation));
+            float distance = (float)(Math.round(locationClass.calculateDistance(driverLocation, passengerLocation)*100))/100;
             item.setDistance(distance);
             ChildItem child = new ChildItem();
             child.setOrigin(rideList.get(i).getOrigin());

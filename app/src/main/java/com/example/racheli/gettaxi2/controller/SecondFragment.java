@@ -99,7 +99,7 @@ public class SecondFragment extends android.app.Fragment {
             LocationClass locationClass = new LocationClass(context);
             Location origin = locationClass.addressToLocation(rideList.get(i).getOrigin());
             Location destination = locationClass.addressToLocation(rideList.get(i).getDestination());
-            float distance = Math.round(locationClass.calculateDistance(origin, destination));
+            float distance = (float)(Math.round(locationClass.calculateDistance(origin, destination)*100))/100;
             item.setDistance(distance);
             item.setRideDate(rideList.get(i).getRideDate());
             ChildItem child = new ChildItem();

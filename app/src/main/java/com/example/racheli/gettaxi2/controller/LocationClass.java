@@ -175,10 +175,9 @@ public class LocationClass extends Activity{
 
         if (a == null) return Float.MAX_VALUE;
                 float distance = a.distanceTo(b);
-                if(distance > 1000)
-                {
-                        distance = distance/1000;
-                }
+             //return in km
+                distance = distance/1000;
+
                 return distance;
 
         }

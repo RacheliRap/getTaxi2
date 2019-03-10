@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void findViews() {
         instance = BackendFactory.getInstance(getApplicationContext());
-        //((Firebase_DBManager)instance).callGetDrivers();
         emailEditext = (EditText) findViewById(R.id.email_editext);
         passwordEditext = (EditText) findViewById(R.id.password_edittext);
         loginButton = (Button) findViewById(R.id.login_button);
@@ -79,21 +78,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getRegisterData();
         initTextChangeListener();
         //addRides();
-       // List<Driver> ls = db.tmp;
-
     }
 
     private void addRides() {
 
 
         try {
-            //String jsonObj = quickParse(ride);
             Backend instance = BackendFactory.getInstance(getApplicationContext());
             for (int i = 0; i < 1; i++) {
                 Ride ride = new Ride();
                 ride.setDestination("Gan Hachayot Hatanachi , Jerusalem");
                 ride.setPhoneNumber("0545423200");
-                ride.setOrigin("Beit HaDfus 7, Jerusalem");
+                ride.setOrigin("Bilu Street 16, Jerusalem");
                 ride.setStartingTime("12:10");
                 ride.setPassengerName("Gadi choen");
                 ride.setPassengerMail("Gadi@gmail.com");
@@ -123,8 +119,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         }
-
-
 
     /**
      * If the user just signed up, the function get the data from the RegisterActivity activity
